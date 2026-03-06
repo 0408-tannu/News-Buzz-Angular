@@ -1190,7 +1190,7 @@ const Navbar = () => {
 
 
             {TokenExist && (<>
-              <div style={{ display: 'flex', alignItems: 'center', flex: 1, justifyContent: 'center', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
                   <Box
                     component="form"
                     onSubmit={handleSearch}
