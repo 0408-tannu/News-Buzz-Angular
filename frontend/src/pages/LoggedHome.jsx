@@ -496,20 +496,10 @@ import { useQuery } from '@tanstack/react-query';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const parentstyle = {
-  // backgroundColor:"black",
-  marginTop: "100px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  padding: "5px",
-  margin: "5px",
-};
 const LoggedHome = () => {
   const { mode } = useContext(ThemeContext);
   const [searchQuery, setSearchQuery] = useState('');

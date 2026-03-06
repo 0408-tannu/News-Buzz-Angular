@@ -1,4 +1,4 @@
-import { Box, Grid, Skeleton } from "@mui/material";
+import { Box, Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import HistoryNewsCard from "../components/HistoryNewsCard";
@@ -8,15 +8,6 @@ import { Button } from "react-bootstrap";
 import toast from "react-hot-toast";
 
 
-const parentstyle = {
-  // backgroundColor:"black",
-  marginTop: "100px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  padding: "5px",
-  margin: "5px",
-};
 
 const History = () => {
 

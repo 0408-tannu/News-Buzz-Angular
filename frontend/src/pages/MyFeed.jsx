@@ -225,22 +225,13 @@ import Skeleton from '@mui/material/Skeleton';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import TextField from '@mui/material/TextField';
-import { Box, Grid } from '@mui/material';
+import { Box } from '@mui/material';
 import { ThemeContext } from '../context/ThemeContext';
 import { Stack } from 'react-bootstrap';
  import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import config from '../config';
 
-const parentstyle = {
-  // backgroundColor:"black",
-  marginTop: "100px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  padding: "5px",
-  margin: "5px",
-};
 const MyFeed = () => {
   const { mode } = useContext(ThemeContext);
   const [searchQuery, setSearchQuery] = useState('');
