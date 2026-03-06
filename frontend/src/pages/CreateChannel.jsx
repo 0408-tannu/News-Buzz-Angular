@@ -128,7 +128,7 @@
 //           className="btn btn-primary"
 //           onClick={handleCreateChannel}
 //           sx={{
-//             fontSize: '1.2rem',
+//             fontSize: '1.35rem',
 //             padding: '0.5rem 1.5rem',
 //           }}
 //         >
@@ -354,7 +354,7 @@ const CreateChannel = () => {
           className="btn btn-primary"
           onClick={handleCreateChannel}
           sx={{
-            fontSize: '1.2rem',
+            fontSize: '1.35rem',
             padding: '0.5rem 1.5rem',
           }}
         >
@@ -366,7 +366,7 @@ const CreateChannel = () => {
           variant="contained"
           color="secondary"
           sx={{
-            fontSize: '1.2rem',
+            fontSize: '1.35rem',
             padding: '0.5rem 1.5rem',
           }}
         >

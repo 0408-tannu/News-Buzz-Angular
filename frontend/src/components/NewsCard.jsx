@@ -946,7 +946,7 @@ const NewsCard = (props) => {
                 variant="caption"
                 sx={{
                   color: mode === "light" ? "rgba(0,0,0,0.45)" : "rgba(255,255,255,0.45)",
-                  fontSize: "0.8rem",
+                  fontSize: "0.95rem",
                   fontWeight: 500,
                 }}
               >

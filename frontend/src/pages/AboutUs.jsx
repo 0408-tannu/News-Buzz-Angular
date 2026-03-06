@@ -68,7 +68,7 @@ const AboutUs = () => {
           sx={{
             fontFamily: "'Quicksand', sans-serif",
             fontWeight: 400,
-            fontSize: '1.1rem',
+            fontSize: '1.25rem',
             color: mode === 'dark' ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.5)',
             maxWidth: '650px',
             margin: '0 auto',
@@ -91,7 +91,7 @@ const AboutUs = () => {
               What We Do
             </Typography>
           </Box>
-          <Typography sx={{ fontFamily: "'Quicksand', sans-serif", fontSize: '16px', lineHeight: 1.9, color: mode === 'dark' ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.65)' }}>
+          <Typography sx={{ fontFamily: "'Quicksand', sans-serif", fontSize: '18px', lineHeight: 1.9, color: mode === 'dark' ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.65)' }}>
             NewsBuzz aggregates news from hundreds of trusted providers, delivering top stories, trending topics,
             and personalized feeds right to your fingertips. We use smart algorithms to bring you the news that
             matters most — whether it's world events, technology, sports, or entertainment.
@@ -107,7 +107,7 @@ const AboutUs = () => {
               Our Mission
             </Typography>
           </Box>
-          <Typography sx={{ fontFamily: "'Quicksand', sans-serif", fontSize: '16px', lineHeight: 1.9, color: mode === 'dark' ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.65)' }}>
+          <Typography sx={{ fontFamily: "'Quicksand', sans-serif", fontSize: '18px', lineHeight: 1.9, color: mode === 'dark' ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.65)' }}>
             We believe everyone deserves access to unbiased, high-quality news. Our mission is to cut through the
             noise and deliver clear, reliable information from diverse perspectives — all in one beautiful,
             easy-to-use platform. No clutter, no bias, just the news you need.
@@ -123,7 +123,7 @@ const AboutUs = () => {
               Our Team
             </Typography>
           </Box>
-          <Typography sx={{ fontFamily: "'Quicksand', sans-serif", fontSize: '16px', lineHeight: 1.9, color: mode === 'dark' ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.65)' }}>
+          <Typography sx={{ fontFamily: "'Quicksand', sans-serif", fontSize: '18px', lineHeight: 1.9, color: mode === 'dark' ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.65)' }}>
             NewsBuzz is built by a passionate team of developers and news enthusiasts who care about keeping the
             world informed. We're constantly improving our platform with new features, better algorithms, and a
             smoother experience — because you deserve the best.
@@ -149,10 +149,10 @@ const AboutUs = () => {
         {features.map((feature, idx) => (
           <Box key={idx} sx={{ ...featureCardStyle, flex: '1 1 280px', maxWidth: '340px' }}>
             <Box sx={{ mb: 2 }}>{feature.icon}</Box>
-            <Typography sx={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 700, fontSize: '1.1rem', mb: 1, color: mode === 'dark' ? '#fff' : '#1a1a2e' }}>
+            <Typography sx={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 700, fontSize: '1.25rem', mb: 1, color: mode === 'dark' ? '#fff' : '#1a1a2e' }}>
               {feature.title}
             </Typography>
-            <Typography sx={{ fontFamily: "'Quicksand', sans-serif", fontSize: '14px', color: mode === 'dark' ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.55)', lineHeight: 1.6 }}>
+            <Typography sx={{ fontFamily: "'Quicksand', sans-serif", fontSize: '16px', color: mode === 'dark' ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.55)', lineHeight: 1.6 }}>
               {feature.desc}
             </Typography>
           </Box>

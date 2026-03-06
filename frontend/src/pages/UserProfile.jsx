@@ -131,7 +131,7 @@ const UserProfile = () => {
               fontWeight: 600,
               color: mode === 'dark' ? '#e0e0e0' : '#2c3e50',
               marginBottom: "0.5rem",
-              fontSize: "1.1rem"
+              fontSize: "1.25rem"
             }}>
               User Name
             </Form.Label>
@@ -157,7 +157,7 @@ const UserProfile = () => {
                   fontWeight: 600,
                   color: mode === 'dark' ? '#e0e0e0' : '#2c3e50',
                   marginBottom: "0.5rem",
-                  fontSize: "1.1rem"
+                  fontSize: "1.25rem"
                 }}>
                   First Name
                 </Form.Label>
@@ -182,7 +182,7 @@ const UserProfile = () => {
                   fontWeight: 600,
                   color: mode === 'dark' ? '#e0e0e0' : '#2c3e50',
                   marginBottom: "0.5rem",
-                  fontSize: "1.1rem"
+                  fontSize: "1.25rem"
                 }}>
                   Age
                 </Form.Label>
@@ -212,7 +212,7 @@ const UserProfile = () => {
                       fontWeight: 600,
                       color: mode === 'dark' ? '#e0e0e0' : '#2c3e50',
                       marginBottom: "0.5rem",
-                      fontSize: "1.1rem"
+                      fontSize: "1.25rem"
                     }
                   } >Last Name</Form.Label>
                 <Form.Control
@@ -239,7 +239,7 @@ const UserProfile = () => {
                       fontWeight: 600,
                       color: mode === 'dark' ? '#e0e0e0' : '#2c3e50',
                       marginBottom: "0.5rem",
-                      fontSize: "1.1rem"
+                      fontSize: "1.25rem"
                     }
                   } >Phone No.</Form.Label>
                 <Form.Control
@@ -268,7 +268,7 @@ const UserProfile = () => {
                   fontWeight: 600,
                   color: mode === 'dark' ? '#e0e0e0' : '#2c3e50',
                   marginBottom: "0.5rem",
-                  fontSize: "1.1rem"
+                  fontSize: "1.25rem"
                 }
               }>Email</Form.Label>
             <Form.Control
@@ -291,7 +291,7 @@ const UserProfile = () => {
               fontWeight: 600,
               color: mode === 'dark' ? '#e0e0e0' : '#2c3e50',
               marginBottom: "0.5rem",
-              fontSize: "1.1rem"
+              fontSize: "1.25rem"
             }}>
               Topics
             </Form.Label>

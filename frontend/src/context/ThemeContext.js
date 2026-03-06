@@ -36,22 +36,22 @@ export const ThemeContextProvider = ({ children }) => {
           fontFamily: 'Quicksand, Arial, sans-serif',
           fontSize: 18,
           htmlFontSize: 18,
-          h1: { fontSize: '2.8rem', fontWeight: 700, letterSpacing: '-0.5px', lineHeight: 1.2 },
-          h2: { fontSize: '2.2rem', fontWeight: 700, letterSpacing: '-0.3px', lineHeight: 1.25 },
-          h3: { fontSize: '1.8rem', fontWeight: 600, lineHeight: 1.3 },
-          h4: { fontSize: '1.5rem', fontWeight: 600, lineHeight: 1.35 },
-          h5: { fontSize: '1.3rem', fontWeight: 600, lineHeight: 1.4 },
-          h6: { fontSize: '1.15rem', fontWeight: 600, lineHeight: 1.4 },
-          subtitle1: { fontSize: '1.1rem', fontWeight: 500, lineHeight: 1.5 },
-          subtitle2: { fontSize: '1rem', fontWeight: 500, lineHeight: 1.5 },
-          body1: { fontSize: '1rem', lineHeight: 1.6 },
-          body2: { fontSize: '0.9rem', lineHeight: 1.6 },
-          caption: { fontSize: '0.8rem', lineHeight: 1.5 },
-          overline: { fontSize: '0.75rem', fontWeight: 600, letterSpacing: '1px' },
+          h1: { fontSize: '3rem', fontWeight: 700, letterSpacing: '-0.5px', lineHeight: 1.2 },
+          h2: { fontSize: '2.4rem', fontWeight: 700, letterSpacing: '-0.3px', lineHeight: 1.25 },
+          h3: { fontSize: '2rem', fontWeight: 600, lineHeight: 1.3 },
+          h4: { fontSize: '1.7rem', fontWeight: 600, lineHeight: 1.35 },
+          h5: { fontSize: '1.45rem', fontWeight: 600, lineHeight: 1.4 },
+          h6: { fontSize: '1.25rem', fontWeight: 600, lineHeight: 1.4 },
+          subtitle1: { fontSize: '1.15rem', fontWeight: 500, lineHeight: 1.5 },
+          subtitle2: { fontSize: '1.05rem', fontWeight: 500, lineHeight: 1.5 },
+          body1: { fontSize: '1.05rem', lineHeight: 1.6 },
+          body2: { fontSize: '0.95rem', lineHeight: 1.6 },
+          caption: { fontSize: '0.88rem', lineHeight: 1.5 },
+          overline: { fontSize: '0.82rem', fontWeight: 600, letterSpacing: '1px' },
           button: {
             fontFamily: 'Quicksand, Arial, sans-serif',
             fontWeight: 600,
-            fontSize: '1rem',
+            fontSize: '1.05rem',
             textTransform: 'none',
             letterSpacing: '0.3px',
           },
@@ -68,7 +68,7 @@ export const ThemeContextProvider = ({ children }) => {
               root: {
                 borderRadius: '50px',
                 padding: '8px 24px',
-                fontSize: '14px',
+                fontSize: '16px',
                 fontWeight: 600,
                 fontFamily: 'Quicksand, Arial, sans-serif',
                 textTransform: 'none',
@@ -132,12 +132,12 @@ export const ThemeContextProvider = ({ children }) => {
                 },
               }),
               sizeSmall: {
-                padding: '4px 16px',
-                fontSize: '12px',
+                padding: '6px 18px',
+                fontSize: '14px',
               },
               sizeLarge: {
                 padding: '12px 32px',
-                fontSize: '16px',
+                fontSize: '18px',
               },
             },
           },
@@ -151,6 +151,62 @@ export const ThemeContextProvider = ({ children }) => {
                 '&:active': {
                   transform: 'scale(0.95)',
                 },
+              },
+            },
+          },
+          MuiTypography: {
+            styleOverrides: {
+              root: {
+                fontFamily: 'Quicksand, Arial, sans-serif',
+              },
+            },
+          },
+          MuiInputBase: {
+            styleOverrides: {
+              root: {
+                fontSize: '1.05rem',
+                fontFamily: 'Quicksand, Arial, sans-serif',
+              },
+            },
+          },
+          MuiMenuItem: {
+            styleOverrides: {
+              root: {
+                fontSize: '1rem',
+                fontFamily: 'Quicksand, Arial, sans-serif',
+              },
+            },
+          },
+          MuiListItemText: {
+            styleOverrides: {
+              primary: {
+                fontSize: '1.05rem',
+                fontFamily: 'Quicksand, Arial, sans-serif',
+              },
+            },
+          },
+          MuiTooltip: {
+            styleOverrides: {
+              tooltip: {
+                fontSize: '0.88rem',
+                fontFamily: 'Quicksand, Arial, sans-serif',
+              },
+            },
+          },
+          MuiChip: {
+            styleOverrides: {
+              label: {
+                fontSize: '0.95rem',
+                fontFamily: 'Quicksand, Arial, sans-serif',
+              },
+            },
+          },
+          MuiTab: {
+            styleOverrides: {
+              root: {
+                fontSize: '1rem',
+                fontFamily: 'Quicksand, Arial, sans-serif',
+                textTransform: 'none',
               },
             },
           },

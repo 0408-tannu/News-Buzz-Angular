@@ -1161,7 +1161,7 @@ const Navbar = () => {
                 <Link
                   className={`nav-link ${mode === 'dark' ? 'text-light' : 'text-dark'}`}
                   to="/providers/all"
-                  style={{ fontSize: '16px', fontFamily: "'Quicksand', sans-serif", fontWeight: 600 }}
+                  style={{ fontSize: '18px', fontFamily: "'Quicksand', sans-serif", fontWeight: 600 }}
                 >
                   Providers
                 </Link>
@@ -1170,7 +1170,7 @@ const Navbar = () => {
                 <Link
                   className={`nav-link ${mode === 'dark' ? 'text-light' : 'text-dark'}`}
                   to="/about"
-                  style={{ fontSize: '16px', fontFamily: "'Quicksand', sans-serif", fontWeight: 600 }}
+                  style={{ fontSize: '18px', fontFamily: "'Quicksand', sans-serif", fontWeight: 600 }}
                 >
                   About Us
                 </Link>
@@ -1215,7 +1215,7 @@ const Navbar = () => {
                         outline: 'none',
                         background: 'transparent',
                         flex: 1,
-                        fontSize: '15px',
+                        fontSize: '17px',
                         fontFamily: "'Quicksand', sans-serif",
                         fontWeight: 500,
                         color: mode === 'dark' ? '#fff' : '#1a1a2e',
@@ -1232,7 +1232,7 @@ const Navbar = () => {
                         boxShadow: 'none',
                         textTransform: 'none',
                         fontWeight: 600,
-                        fontSize: '14px',
+                        fontSize: '16px',
                         fontFamily: "'Quicksand', sans-serif",
                         '&:hover': {
                           background: 'linear-gradient(135deg, #0066cc 0%, #004999 100%)',
@@ -1546,7 +1546,7 @@ const Navbar = () => {
                     textTransform: 'none',
                     fontFamily: 'Quicksand, Arial, sans-serif',
                     fontWeight: 800,
-                    fontSize: '1.15rem',
+                    fontSize: '1.25rem',
                     letterSpacing: '0.3px',
                     px: 2,
                     py: 0.8,
@@ -1712,7 +1712,7 @@ const Navbar = () => {
               onClick={() => navigate(`/search?q=${encodeURIComponent(text)}`)}
               onContextMenu={(e) => handleRightClick(e, text)}
               sx={{
-                fontSize: '13px',
+                fontSize: '15px',
                 fontFamily: "Quicksand",
                 fontWeight: 600,
                 color: mode === 'dark' ? '#e0e0e0' : '#333',

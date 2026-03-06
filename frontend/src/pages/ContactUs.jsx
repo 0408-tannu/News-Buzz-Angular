@@ -94,7 +94,7 @@ const ContactUs = () => {
         sx={{
           fontFamily: "'Quicksand', sans-serif",
           fontWeight: 400,
-          fontSize: '1.1rem',
+          fontSize: '1.25rem',
           textAlign: 'center',
           color: mode === 'dark' ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.5)',
           maxWidth: '600px',
@@ -116,8 +116,8 @@ const ContactUs = () => {
             <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: idx < contactItems.length - 1 ? 3 : 0 }}>
               <Box sx={iconBoxStyle}>{item.icon}</Box>
               <Box>
-                <Typography sx={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 600, color: mode === 'dark' ? '#fff' : '#1a1a2e', fontSize: '15px' }}>{item.label}</Typography>
-                <Typography sx={{ fontFamily: "'Quicksand', sans-serif", color: mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.55)', fontSize: '14px' }}>{item.value}</Typography>
+                <Typography sx={{ fontFamily: "'Quicksand', sans-serif", fontWeight: 600, color: mode === 'dark' ? '#fff' : '#1a1a2e', fontSize: '17px' }}>{item.label}</Typography>
+                <Typography sx={{ fontFamily: "'Quicksand', sans-serif", color: mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.55)', fontSize: '16px' }}>{item.value}</Typography>
               </Box>
             </Box>
           ))}
@@ -160,7 +160,7 @@ const ContactUs = () => {
               sx={{
                 fontFamily: "'Quicksand', sans-serif",
                 fontWeight: 700,
-                fontSize: '16px',
+                fontSize: '18px',
                 borderRadius: '50px',
                 padding: '12px 32px',
                 background: 'linear-gradient(135deg, rgb(30, 144, 255), rgb(0, 100, 200))',

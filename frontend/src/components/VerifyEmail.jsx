@@ -326,7 +326,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
   padding: '12px',
   borderRadius: '8px',
   textTransform: 'none',
-  fontSize: '16px',
+  fontSize: '18px',
   backgroundColor: '#3b82f6',
   '&:hover': {
     backgroundColor: '#2563eb',
@@ -337,7 +337,7 @@ const StyledCodeInput = styled(InputBase)(({ theme }) => ({
   width: '48px',
   height: '48px',
   textAlign: 'center',
-  fontSize: '20px',
+  fontSize: '22px',
   backgroundColor: '#f8fafc',
   borderRadius: '8px',
   border: '1px solid #e2e8f0',

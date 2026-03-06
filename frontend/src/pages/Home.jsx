@@ -502,7 +502,7 @@ const Home = () => {
             transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
             "& .MuiOutlinedInput-root": {
               borderRadius: "50px",
-              fontSize: "16px",
+              fontSize: "18px",
               fontWeight: 500,
               padding: "4px 8px",
               "& fieldset": {
@@ -586,7 +586,7 @@ const Home = () => {
                 style={{
                   fontFamily: "'Quicksand', 'Arial', sans-serif",
                   fontWeight: "bold",
-                  fontSize: "16px",
+                  fontSize: "18px",
                   borderRadius: "50px",
                   border: "none",
                   background: "linear-gradient(135deg, #1a8754 0%, #134611 100%)",

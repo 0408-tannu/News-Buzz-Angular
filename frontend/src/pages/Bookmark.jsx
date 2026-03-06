@@ -337,7 +337,7 @@ const Bookmark = () => {
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             "& .MuiOutlinedInput-root": {
               borderRadius: '50px',
-              fontSize: '16px',
+              fontSize: '18px',
               fontWeight: 500,
               padding: '4px 8px',
               "& fieldset": {

@@ -178,7 +178,7 @@ const SidebarNavigation = ({ open, setOpen }) => {
                     primaryTypographyProps={{
                       sx: {
                         fontWeight: 500,
-                        fontSize: "0.95rem",
+                        fontSize: "1.05rem",
                         whiteSpace: "nowrap",
                       },
                     }}
@@ -239,7 +239,7 @@ const SidebarNavigation = ({ open, setOpen }) => {
                 primaryTypographyProps={{
                   sx: {
                     fontWeight: 500,
-                    fontSize: "0.95rem",
+                    fontSize: "1.05rem",
                     whiteSpace: "nowrap",
                   },
                 }}
@@ -289,7 +289,7 @@ const SidebarNavigation = ({ open, setOpen }) => {
                 primaryTypographyProps={{
                   sx: {
                     fontWeight: 500,
-                    fontSize: "0.95rem",
+                    fontSize: "1.05rem",
                     whiteSpace: "nowrap",
                     color: mode === "dark" ? "#ff6b6b" : "#d32f2f",
                   },

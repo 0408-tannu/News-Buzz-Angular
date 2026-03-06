@@ -35,7 +35,7 @@ const StyledInput = styled(InputBase)(({ theme }) => ({
   marginBottom: '16px',
   '& .MuiInputBase-input': {
     padding: '14px 16px',
-    fontSize: '15px',
+    fontSize: '17px',
     '&::placeholder': {
       color: '#94a3b8',
       opacity: 1,
@@ -57,7 +57,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
   marginTop: '8px',
   borderRadius: '8px',
   textTransform: 'none',
-  fontSize: '16px',
+  fontSize: '18px',
   fontWeight: 500,
   backgroundColor: '#3b82f6',
   color: '#ffffff',
@@ -83,7 +83,7 @@ const RequirementItem = styled(Box)(({ met }) => ({
   alignItems: 'center',
   gap: '8px',
   color: met ? '#22c55e' : '#94a3b8',
-  fontSize: '14px',
+  fontSize: '16px',
   marginBottom: '4px'
 }));
 
