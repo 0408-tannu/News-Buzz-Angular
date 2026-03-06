@@ -23,7 +23,7 @@ import AboutUs from './pages/AboutUs.jsx';
 import ContactUs from './pages/ContactUs.jsx';
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import quiz from './images/quiz.png';
+import QuizLogo from './components/QuizLogo.jsx';
 import { GET } from './api';
 
 const theme = createTheme({
@@ -117,16 +117,7 @@ function App() {
             },
           }}
         >
-          <img
-            src={quiz}
-            alt="Quiz Icon"
-            style={{
-              width: 32,
-              height: 40,
-              display: 'block',
-              borderRadius: 8, // Rounded corners for the image
-            }}
-          />
+          <QuizLogo size={48} />
         </Button>
       )}
 
