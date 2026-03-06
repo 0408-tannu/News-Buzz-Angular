@@ -828,8 +828,8 @@ const NewsCard = (props) => {
                         alt="Provider Logo"
                         onError={(e) => { e.target.style.display = 'none'; }}
                         style={{
-                          maxWidth: "40px",
-                          maxHeight: "40px",
+                          width: "24px",
+                          height: "24px",
                           objectFit: "contain",
                         }}
                       />
@@ -860,8 +860,8 @@ const NewsCard = (props) => {
                         alt="Provider Logo"
                         onError={(e) => { e.target.style.display = 'none'; }}
                         style={{
-                          maxWidth: "100%",
-                          maxHeight: "80%",
+                          width: "28px",
+                          height: "28px",
                           objectFit: "contain",
                         }}
                       />

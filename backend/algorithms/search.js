@@ -83,7 +83,7 @@ const Scrap = async ({
           link: articleLink,
           imgURL: null,
           time: getRelativeTime(item.pubDate),
-          providerImg: getProviderLogo(providerName),
+          providerImg: getProviderLogo(providerName, articleLink),
           providerName: providerName,
         };
       })

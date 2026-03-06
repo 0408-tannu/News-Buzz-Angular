@@ -184,7 +184,7 @@ const Scrap = async ({
           link: articleLink,
           imgURL: imgURL || `https://placehold.co/300x200?text=${encodeURIComponent(providerName)}`,
           time: getRelativeTime(item.pubDate),
-          providerImg: getProviderLogo(articleLink),
+          providerImg: getProviderLogo(providerName, articleLink),
           providerName: providerName,
         };
       })

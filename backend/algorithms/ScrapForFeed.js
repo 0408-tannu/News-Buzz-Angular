@@ -47,7 +47,7 @@ const ScrapForFeed = async (SearchTexts) => {
             link: item.link || "",
             imgURL: null,
             time: getRelativeTime(item.pubDate),
-            providerImg: getProviderLogo(providerName),
+            providerImg: getProviderLogo(providerName, item.link),
             providerName: providerName,
           };
         })

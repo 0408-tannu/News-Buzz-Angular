@@ -146,8 +146,9 @@ const extractTextFromContent = (content) => {
 /**
  * Generate a provider logo URL using Google's favicon service.
  * For Google News redirect URLs, uses the provider name to generate a useful favicon.
+ * If an articleUrl is provided, extracts the real domain from it for a more accurate favicon.
  */
-const getProviderLogo = (providerName) => {
+const getProviderLogo = (providerName, articleUrl = null) => {
   // Map of common news providers to their domains for accurate favicons
   const providerDomains = {
     "the times of india": "timesofindia.indiatimes.com",
@@ -223,14 +224,31 @@ const getProviderLogo = (providerName) => {
     "times now": "timesnownews.com",
   };
 
-  const domain =
-    providerDomains[providerName.toLowerCase()] ||
-    providerName
+  // 1. Check hardcoded map first
+  let domain = providerDomains[providerName.toLowerCase()];
+
+  // 2. Try extracting domain from article URL (more accurate than guessing)
+  if (!domain && articleUrl) {
+    try {
+      const url = new URL(articleUrl);
+      // Skip Google News redirect URLs
+      if (!url.hostname.includes("google.com") && !url.hostname.includes("google.co.")) {
+        domain = url.hostname.replace(/^www\./, "");
+      }
+    } catch (e) {
+      // Invalid URL, fall through to guessing
+    }
+  }
+
+  // 3. Fallback: guess domain from provider name
+  if (!domain) {
+    domain = providerName
       .toLowerCase()
       .replace(/\s+/g, "")
       .replace(/[^a-z0-9.]/g, "") + ".com";
+  }
 
-  return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+  return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
 };
 
 /**

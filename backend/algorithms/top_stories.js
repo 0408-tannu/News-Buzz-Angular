@@ -35,7 +35,7 @@ const Scrap = async (searchby) => {
           title: getCleanTitle(item.title),
           link: item.link || "",
           time: getRelativeTime(item.pubDate),
-          providerImg: getProviderLogo(providerName),
+          providerImg: getProviderLogo(providerName, item.link),
           providerName: providerName,
         };
       })
