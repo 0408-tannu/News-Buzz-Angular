@@ -495,7 +495,7 @@ const Home = () => {
           placeholder="Search from given articles..."
           sx={{
             m: 1,
-            width: "500px",
+            width: "600px",
             height: "100%",
             borderRadius: "50px",
             bgcolor: mode === "dark" ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.04)",
@@ -520,7 +520,7 @@ const Home = () => {
               bgcolor: mode === "dark" ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)",
             },
             "&:focus-within": {
-              width: "650px",
+              width: "750px",
               bgcolor: mode === "dark" ? "rgba(255,255,255,0.12)" : "#fff",
               boxShadow: "0 4px 20px rgba(30, 144, 255, 0.12)",
               "& .MuiInputAdornment-root .MuiSvgIcon-root": {

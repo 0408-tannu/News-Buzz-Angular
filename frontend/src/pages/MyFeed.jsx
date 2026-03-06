@@ -370,13 +370,16 @@ const MyFeed = () => {
             placeholder="Search from given articles..."
             sx={{
               m: 1,
-              width: "400px",
+              width: "600px",
               height: "100%",
-              borderRadius: "25px",
-              bgcolor: mode === "dark" ? "#444" : "rgb(251, 248, 248)",
-              transition: "width 0.25s ease-in-out",
+              borderRadius: "50px",
+              bgcolor: mode === "dark" ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.04)",
+              transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
               "& .MuiOutlinedInput-root": {
-                borderRadius: "25px",
+                borderRadius: "50px",
+                fontSize: "16px",
+                fontWeight: 500,
+                padding: "4px 8px",
                 "& fieldset": {
                   borderColor: "transparent",
                 },
@@ -384,20 +387,21 @@ const MyFeed = () => {
                   borderColor: "transparent",
                 },
                 "&.Mui-focused fieldset": {
-                  borderColor: "transparent",
+                  borderColor: "rgb(30, 144, 255)",
+                  borderWidth: "2px",
                 },
               },
               "&:hover": {
-                bgcolor: mode === "dark" ? "#555" : "rgb(240, 240, 240)",
+                bgcolor: mode === "dark" ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)",
               },
               "&:focus-within": {
-                width: "600px",
-                bgcolor: mode === "dark" ? "#555" : "rgb(240, 240, 240)",
+                width: "750px",
+                bgcolor: mode === "dark" ? "rgba(255,255,255,0.12)" : "#fff",
+                boxShadow: "0 4px 20px rgba(30, 144, 255, 0.12)",
                 "& .MuiInputAdornment-root .MuiSvgIcon-root": {
-                  color: "blue",
-                  transform: "scale(1.4) rotateY(360deg)",
-                  transition:
-                    "transform 1.1s ease-in-out, color 0.3s ease-in-out",
+                  color: "rgb(30, 144, 255)",
+                  transform: "scale(1.2)",
+                  transition: "all 0.3s ease",
                 },
               },
             }}
