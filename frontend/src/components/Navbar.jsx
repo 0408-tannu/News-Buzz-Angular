@@ -1535,21 +1535,28 @@ const Navbar = () => {
             </>)}
 
             {TokenExist && (
-              <Tooltip title="My Account" placement="bottom">
+              <Tooltip title="My Account" placement="bottom" arrow>
                 <Button
                   onClick={() => navigate('/account')}
-                  startIcon={<AccountCircleRoundedIcon sx={{ fontSize: 36 }} />}
+                  startIcon={<AccountCircleRoundedIcon sx={{ fontSize: 42 }} />}
                   sx={{
-                    ml: 2,
-                    color: mode === 'dark' ? '#e0e0e0' : '#333',
+                    ml: 3,
+                    color: mode === 'dark' ? '#fff' : '#1a1a2e',
                     textTransform: 'none',
                     fontFamily: 'Quicksand, Arial, sans-serif',
-                    fontWeight: 700,
-                    fontSize: '1.1rem',
+                    fontWeight: 800,
+                    fontSize: '1.25rem',
+                    letterSpacing: '0.3px',
+                    px: 2,
+                    py: 1,
+                    borderRadius: '50px',
+                    border: mode === 'dark' ? '1.5px solid rgba(255,255,255,0.15)' : '1.5px solid rgba(0,0,0,0.1)',
                     '&:hover': {
-                      backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
+                      backgroundColor: mode === 'dark' ? 'rgba(30,144,255,0.12)' : 'rgba(30,144,255,0.06)',
+                      borderColor: 'rgb(30,144,255)',
+                      color: 'rgb(30,144,255)',
                     },
-                    transition: 'all 0.2s ease',
+                    transition: 'all 0.25s ease',
                   }}
                 >
                   My Account
