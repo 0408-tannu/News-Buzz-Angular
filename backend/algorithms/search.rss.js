@@ -1,19 +1,84 @@
 // Google News RSS Feed - replaces Puppeteer scraping for search
-// Uses shared rssUtils for image fetching and provider logos
+// Uses free Google News RSS feeds for reliable, fast news fetching
 
-import {
-  createParser,
-  extractProviderName,
-  getCleanTitle,
-  extractTextFromContent,
-  getProviderLogo,
-  getRelativeTime,
-} from "./rssUtils.js";
+import Parser from "rss-parser";
 import { addSearchLocation } from "../controllers/csearchLocation.js";
 import { newsProvidermodel } from "../models/mnewsProvider.js";
 import mute_model from "../models/mmute.js";
 
-const parser = createParser();
+const parser = new Parser({
+  customFields: {
+    item: [
+      ["media:content", "mediaContent", { keepArray: false }],
+      ["source", "source"],
+    ],
+  },
+  headers: {
+    "User-Agent":
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    Accept: "application/rss+xml, application/xml, text/xml, */*",
+  },
+  timeout: 15000,
+});
+
+/**
+ * Extract image URL from RSS item content/description HTML
+ */
+const extractImageFromContent = (content) => {
+  if (!content) return null;
+  const imgMatch = content.match(/<img[^>]+src=["']([^"']+)["']/i);
+  return imgMatch ? imgMatch[1] : null;
+};
+
+/**
+ * Extract description text from RSS item content HTML
+ */
+const extractTextFromContent = (content) => {
+  if (!content) return null;
+  let text = content
+    .replace(/<img[^>]*>/gi, "")
+    .replace(/<a[^>]*>(.*?)<\/a>/gi, "$1")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, " ")
+    .trim();
+  return text || null;
+};
+
+/**
+ * Extract provider/source name from RSS item
+ */
+const extractProviderName = (item) => {
+  if (item.source && typeof item.source === "object" && item.source._) {
+    return item.source._;
+  }
+  if (item.source && typeof item.source === "string") {
+    return item.source;
+  }
+  if (item.title) {
+    const parts = item.title.split(" - ");
+    if (parts.length > 1) {
+      return parts[parts.length - 1].trim();
+    }
+  }
+  return "Google News";
+};
+
+/**
+ * Generate a provider logo URL using Google's favicon service
+ */
+const getProviderLogo = (link) => {
+  try {
+    const url = new URL(link);
+    return `https://www.google.com/s2/favicons?domain=${url.hostname}&sz=64`;
+  } catch {
+    return `https://www.google.com/s2/favicons?domain=news.google.com&sz=64`;
+  }
+};
 
 /**
  * Get the base URL of a news provider from article link
@@ -25,6 +90,43 @@ const getProviderBaseURL = (link) => {
   } catch {
     return null;
   }
+};
+
+/**
+ * Get clean title (remove source suffix that Google adds)
+ */
+const getCleanTitle = (title) => {
+  if (!title) return "";
+  const parts = title.split(" - ");
+  if (parts.length > 1) {
+    parts.pop();
+    return parts.join(" - ").trim();
+  }
+  return title.trim();
+};
+
+/**
+ * Convert relative time string from RSS pubDate
+ */
+const getRelativeTime = (pubDate) => {
+  if (!pubDate) return "Recently";
+  const now = new Date();
+  const published = new Date(pubDate);
+  const diffMs = now - published;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return "Just now";
+  if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? "s" : ""} ago`;
+  if (diffHours < 24)
+    return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+  if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+  return published.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 };
 
 /**
@@ -51,7 +153,7 @@ const Scrap = async ({
     const country = gl || "IN";
     const rssUrl = `https://news.google.com/rss/search?q=${encodedQuery}&hl=en-${country}&gl=${country}&ceid=${country}:en`;
 
-    console.log(`[Search RSS] Fetching: ${rssUrl}`);
+    console.log(`Fetching RSS feed: ${rssUrl}`);
 
     const feed = await parser.parseURL(rssUrl);
 
@@ -69,21 +171,20 @@ const Scrap = async ({
     const pageSize = 10;
     const startIndex = pageNum * pageSize;
 
-    let articles = feed.items
+    const articles = feed.items
       .map((item) => {
         const providerName = extractProviderName(item);
         const articleLink = item.link || "";
-        const someText = extractTextFromContent(
-          item.content || item.contentSnippet || "",
-        );
+        const imgURL = extractImageFromContent(item.content || item["content:encoded"] || "");
+        const someText = extractTextFromContent(item.content || item["content:encoded"] || item.contentSnippet || "");
 
         return {
           title: getCleanTitle(item.title),
           someText: someText || item.contentSnippet || "Read more...",
           link: articleLink,
-          imgURL: null,
+          imgURL: imgURL || `https://placehold.co/300x200?text=${encodeURIComponent(providerName)}`,
           time: getRelativeTime(item.pubDate),
-          providerImg: getProviderLogo(providerName),
+          providerImg: getProviderLogo(articleLink),
           providerName: providerName,
         };
       })
@@ -104,10 +205,10 @@ const Scrap = async ({
       })
       .slice(startIndex, startIndex + pageSize);
 
-    console.log(`[Search RSS] Found ${articles.length} articles for "${query}"`);
+    console.log(`Found ${articles.length} articles via RSS for "${query}"`);
     return articles;
   } catch (error) {
-    console.error("[Search RSS] Error:", error.message);
+    console.error("Error fetching RSS feed:", error.message);
     return [];
   }
 };

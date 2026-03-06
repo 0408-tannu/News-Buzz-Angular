@@ -12,10 +12,7 @@ import Signup from './pages/Signup';
 import MyFeed from './pages/MyFeed';
 import Bookmark from './pages/Bookmark.jsx';
 import PageNotFound from './pages/PageNotFound';
-import { ThemeContextProvider, ThemeContext } from './context/ThemeContext';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
-import IconButton from '@mui/material/IconButton';
+import { ThemeContextProvider } from './context/ThemeContext';
 import UserProfile from './pages/UserProfile';
 import NewsProviderPageAll from './pages/NewsProviderPageAll.jsx';
 import NewsProviderPageFollowing from './pages/NewsProviderPageFollowing.jsx';
@@ -139,23 +136,7 @@ function App() {
         </AppBar>
 
         {shouldShowNavbar_Sidebar && (
-          <ThemeContext.Consumer>
-            {({ toggleTheme, mode }) => (
-              <IconButton
-                onClick={toggleTheme}
-                sx={{
-                  position: 'fixed',
-                  top: 10,
-                  right: 10,
-                  backgroundColor: mode === 'dark' ? 'white' : 'black',
-                  color: mode === 'dark' ? 'black' : 'white',
-                  zIndex: 999999999,
-                }}
-              >
-                {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
-              </IconButton>
-            )}
-          </ThemeContext.Consumer>
+          <Box />
         )}
 
         <Routes>

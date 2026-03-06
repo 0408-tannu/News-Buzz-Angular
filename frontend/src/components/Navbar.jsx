@@ -886,6 +886,8 @@ import { GET, POST } from '../api';
 // import zIndex from '@mui/material/styles/zIndex';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import TravelExploreRoundedIcon from '@mui/icons-material/TravelExploreRounded';
+import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
+import Tooltip from '@mui/material/Tooltip';
 import toast from 'react-hot-toast';
 import logo from '../images/logo.jpg';
 
@@ -992,11 +994,6 @@ const Navbar = () => {
   }, [cityData]);
 
 
-
-  const handleLogout = () => {
-    window.localStorage.removeItem('token');
-    navigate('/login'); return;
-  };
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -1514,9 +1511,32 @@ const Navbar = () => {
               </div>
             </>)}
 
+            {TokenExist && (
+              <Tooltip title="My Account" placement="bottom">
+                <Button
+                  onClick={() => navigate('/account')}
+                  startIcon={<AccountCircleRoundedIcon sx={{ fontSize: 28 }} />}
+                  sx={{
+                    ml: 2,
+                    color: mode === 'dark' ? '#333' : '#f0f0f0',
+                    textTransform: 'none',
+                    fontFamily: 'Quicksand, Arial, sans-serif',
+                    fontWeight: 600,
+                    fontSize: '0.95rem',
+                    '&:hover': {
+                      backgroundColor: mode === 'dark' ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.15)',
+                    },
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  My Account
+                </Button>
+              </Tooltip>
+            )}
+
             <form className="d-flex mx-5">
               {TokenExist ? (
-                <button className="btn btn-danger mx-1" onClick={handleLogout}>Logout</button>
+                <></>
               ) : (
                 <>
                   <Link className="btn btn-primary mx-1" to="/login" role="button">Login</Link>

@@ -4,7 +4,8 @@
 # Optimized for macOS/zsh.
 
 # Handle Ctrl+C by restarting the script
-trap 'echo -e "\n[Interrupted] Restarting..."; exec "$0"' SIGINT
+SCRIPT_PATH="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
+trap 'echo -e "\n[Interrupted] Restarting..."; exec bash "$SCRIPT_PATH"' SIGINT
 
 echo ""
 echo "Please type your question below. To submit, type '---' on a new line."

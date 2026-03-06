@@ -15,9 +15,17 @@ const top_stories_schema = new mongoose.Schema({
     type: String,
     required: true
   },
+  imgURL: {
+    type: String,
+    default: ""
+  },
   providerImg: {
     type: String,
     required: true
+  },
+  providerName: {
+    type: String,
+    default: ""
   }
 },
   {

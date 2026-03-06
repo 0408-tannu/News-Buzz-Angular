@@ -104,6 +104,7 @@ const NewsCard = (props) => {
                       <img
                         src={props.providerImg}
                         alt="Provider Logo"
+                        onError={(e) => { e.target.style.display = 'none'; }}
                         style={{
                           maxWidth: "40px",
                           maxHeight: "40px",
@@ -135,6 +136,7 @@ const NewsCard = (props) => {
                       <img
                         src={props.providerImg}
                         alt="Provider Logo"
+                        onError={(e) => { e.target.style.display = 'none'; }}
                         style={{
                           maxWidth: "100%",
                           maxHeight: "80%",
@@ -183,6 +185,7 @@ const NewsCard = (props) => {
                 <img
                   src={props.imgURL}
                   alt="Article"
+                  onError={(e) => { e.target.style.display = 'none'; }}
                   style={{
                     maxWidth: "100%",
                     maxHeight: "150px",
