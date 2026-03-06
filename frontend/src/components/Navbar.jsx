@@ -1529,6 +1529,7 @@ const Navbar = () => {
 
                   </div>
                 )}
+              </div>
 
                 <Tooltip title="My Account" placement="bottom" arrow>
                   <Button
@@ -1543,10 +1544,10 @@ const Navbar = () => {
                       letterSpacing: '0.3px',
                       px: 2,
                       py: 0.8,
-                      ml: 0.5,
                       borderRadius: '50px',
                       border: mode === 'dark' ? '1.5px solid rgba(255,255,255,0.15)' : '1.5px solid rgba(0,0,0,0.1)',
                       whiteSpace: 'nowrap',
+                      marginLeft: 'auto',
                       '&:hover': {
                         backgroundColor: mode === 'dark' ? 'rgba(30,144,255,0.12)' : 'rgba(30,144,255,0.06)',
                         borderColor: 'rgb(30,144,255)',
@@ -1558,7 +1559,6 @@ const Navbar = () => {
                     My Account
                   </Button>
                 </Tooltip>
-              </div>
             </>)}
 
             <form className="d-flex mx-5">
