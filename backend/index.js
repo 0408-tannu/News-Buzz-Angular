@@ -22,6 +22,7 @@ import {router as providerroute} from './routes/rprovider.js';
 import { router as quiz_router } from './routes/rquiz.js';
 import { router as history_router } from './routes/rhistory.js';
 import { router as mute_router } from './routes/rmute.js';
+import { loadProviderCache, refreshAllProviderLogos } from './utils/providerCache.js';
 
 
 import path from 'path';
@@ -41,6 +42,8 @@ app.use(express.static(path.join(__dirname, './frontend/build')));
 
 mongoose.connect(process.env.MONGO_URL).then(() => {
   console.log("connected to mongodb");
+  // Load provider cache into memory on startup
+  loadProviderCache();
 }).catch((err) => {
   console.log(`${err} \n error connecting mongoDB `);
 });
@@ -85,6 +88,16 @@ app.get('/api/get',(req,res)=> {res.json({message:"Hello Backend 2ND time"})});
 app.get('/api',(req,res)=> {res.json({message:"Hello Backend 2ND time"})});
 app.get('/api/test', (req, res) => {
   res.json({ message: 'Hello from Serverless!' }); // Proper JSON response
+});
+
+// One-time endpoint to refresh all existing provider logos to Google Favicon 128px
+app.get('/api/refresh-provider-logos', async (req, res) => {
+  try {
+    const count = await refreshAllProviderLogos();
+    res.json({ success: true, message: `Updated ${count} provider logos to Google Favicon 128px` });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 });
 
 

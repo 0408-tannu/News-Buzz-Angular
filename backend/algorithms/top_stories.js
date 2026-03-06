@@ -10,6 +10,7 @@ import {
 } from "./rssUtils.js";
 import { top_stories_model } from "../models/mtopStories.js";
 import { newsProvidermodel } from "../models/mnewsProvider.js";
+import { batchSaveProviders } from "../utils/providerCache.js";
 
 const parser = createParser();
 
@@ -118,37 +119,10 @@ const ScrapTop_stories = async (req, res) => {
         }
       }
 
-      // Process news providers
-      for (const article of articles) {
-        try {
-          const url = new URL(article.link);
-          const finalURL = `${url.protocol}//${url.hostname}`;
-
-          let providerName = article.providerName || 
-            finalURL
-              .replace(/^https?:\/\//, "")
-              .replace(/^www\./, "")
-              .replace(/\.com$/, "")
-              .replace(/\.in$/, "");
-
-          if (providerName.includes(".")) {
-            providerName = providerName.replace(/\./g, "-");
-          }
-
-          const provider = await newsProvidermodel.findOne({
-            baseURL: finalURL,
-          });
-          if (!provider) {
-            await newsProvidermodel.create({
-              name: providerName,
-              baseURL: finalURL,
-              logo: article.providerImg,
-            });
-          }
-        } catch (err) {
-          console.log("Error processing provider:", err.message);
-        }
-      }
+      // Save news providers to database (efficient batch upsert)
+      batchSaveProviders(articles).catch((err) =>
+        console.error("Error batch saving providers:", err.message)
+      );
 
       res.status(202).json({ success: true, articles: articles });
     } catch (err) {

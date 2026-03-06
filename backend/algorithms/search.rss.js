@@ -3,7 +3,7 @@
 
 import Parser from "rss-parser";
 import { addSearchLocation } from "../controllers/csearchLocation.js";
-import { newsProvidermodel } from "../models/mnewsProvider.js";
+import { batchSaveProviders, getProviderBaseURL } from "../utils/providerCache.js";
 import mute_model from "../models/mmute.js";
 
 const parser = new Parser({
@@ -81,17 +81,6 @@ const getProviderLogo = (link) => {
 };
 
 /**
- * Get the base URL of a news provider from article link
- */
-const getProviderBaseURL = (link) => {
-  try {
-    const url = new URL(link);
-    return `${url.protocol}//${url.hostname}`;
-  } catch {
-    return null;
-  }
-};
-
 /**
  * Get clean title (remove source suffix that Google adds)
  */
@@ -256,27 +245,10 @@ const scrapSearch = async (req, res) => {
     await addSearchLocation(req, res, Text);
   }
 
-  // Save news providers to database
-  for (const article of articles) {
-    const ProviderBaseURL = getProviderBaseURL(article.link);
-    if (ProviderBaseURL) {
-      try {
-        const provider = await newsProvidermodel.findOne({
-          baseURL: ProviderBaseURL,
-        });
-        if (!provider) {
-          await newsProvidermodel.create({
-            name: article.providerName,
-            baseURL: ProviderBaseURL,
-            logo: article.providerImg,
-          });
-          console.log(`Provider ${article.providerName} created.`);
-        }
-      } catch (err) {
-        console.error("Error processing provider:", err.message);
-      }
-    }
-  }
+  // Save news providers to database (efficient batch upsert)
+  batchSaveProviders(articles).catch((err) =>
+    console.error("Error batch saving providers:", err.message)
+  );
 
   res.status(202).json({ success: true, articles: articles });
 };
