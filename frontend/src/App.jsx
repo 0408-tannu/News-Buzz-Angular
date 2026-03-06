@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Routes, Route, useLocation, useSearchParams } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { Box, CssBaseline, AppBar } from '@mui/material';
+import { Box, CssBaseline } from '@mui/material';
 import SidebarNavigation from './components/SidebarNavigation';
 import Navbar from './components/Navbar';
 import LoggedHome from './pages/LoggedHome';
@@ -31,6 +31,8 @@ const theme = createTheme({
 function App() {
   const [open, setOpen] = useState(false);
   const [role, setRole] = useState('');
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const headerRef = useRef(null);
   const location = useLocation();
 
   // Define routes where ThemeProvider and ThemeContextProvider are not needed
@@ -73,6 +75,28 @@ function App() {
   //   }
   // }, [role, navigate]);
 
+  // Measure header height dynamically
+  const updateHeaderHeight = useCallback(() => {
+    if (headerRef.current) {
+      setHeaderHeight(headerRef.current.offsetHeight);
+    }
+  }, []);
+
+  useEffect(() => {
+    updateHeaderHeight();
+    // Use ResizeObserver to detect header size changes
+    const observer = new ResizeObserver(updateHeaderHeight);
+    if (headerRef.current) {
+      observer.observe(headerRef.current);
+    }
+    return () => observer.disconnect();
+  }, [updateHeaderHeight, shouldShowNavbar_Sidebar]);
+
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   const AppContent = (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -83,14 +107,27 @@ function App() {
         </Box>
       )}
 
-      <Box component="main" sx={{ flexGrow: 1, ml: `${open ? '-120px' : '60px'}` }}>
-        <AppBar position="sticky" sx={{ top: 0, zIndex: 1100, backgroundColor: 'transparent', backgroundImage: 'none' }} elevation={0}>
-          <Box sx={{ marginLeft: '60px' }}>
-            {shouldShowNavbar_Sidebar && role !== "PROVIDER" && <Navbar />}
-          </Box>
-        </AppBar>
+      <Box component="main" sx={{ flexGrow: 1, ml: window.localStorage.getItem('token') && role !== "PROVIDER" ? `${open ? '220px' : '64px'}` : 0 }}>
+        {/* Fixed header */}
+        <Box
+          ref={headerRef}
+          sx={{
+            position: 'fixed',
+            top: 0,
+            left: window.localStorage.getItem('token') && role !== "PROVIDER" ? `${open ? '220px' : '64px'}` : 0token') && role !== "PROVIDER" ? `${open ? '220px' : '64px'}` : 0,
+            right: 0,
+            zIndex: 1100,
+          }}
+        >
+          {shouldShowNavbar_Sidebar && role !== "PROVIDER" && <Navbar />}
+        </Box>
 
-        <Box sx={{ padding: '24px', position: 'relative' }}>
+        {/* Dynamic spacer matching header height */}
+        {shouldShowNavbar_Sidebar && (
+          <Box sx={{ height: `${headerHeight}px` }} />
+        )}
+
+        <Box sx={{ padding: '24px' }}>
           <Routes>
           {role !== "PROVIDER" && <Route path="/" element={window.localStorage.getItem('token') ? <LoggedHome /> : <Home />} />}
           <Route path="/login" element={<Login />} />
