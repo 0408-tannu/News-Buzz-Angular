@@ -889,7 +889,7 @@ import TravelExploreRoundedIcon from '@mui/icons-material/TravelExploreRounded';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 import Tooltip from '@mui/material/Tooltip';
 import toast from 'react-hot-toast';
-import Logo from './Logo';
+import logo from '../images/logo.jpg';
 
 const Navbar = () => {
 
@@ -1153,7 +1153,7 @@ const Navbar = () => {
         <div className="container-fluid">
           {/* <Link className={`navbar-brand ${mode === 'dark' ? 'text-dark' : 'text-light'}`} to="/">NewsBuzz</Link> */}
           <Link className={`navbar-brand ${mode === 'dark' ? 'text-light' : 'text-dark'}`} to="/">
-            <Logo height={52} />
+            <img src={logo} alt="NewsBuzz" style={{ height: '48px', borderRadius: '8px' }} />
           </Link>
 
 
