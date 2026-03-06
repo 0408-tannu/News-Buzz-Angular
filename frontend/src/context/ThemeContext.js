@@ -21,6 +21,123 @@ export const ThemeContextProvider = ({ children }) => {
       createTheme({
         palette: {
           mode,
+          primary: {
+            main: '#1E90FF',
+            light: '#4DA8FF',
+            dark: '#0055CC',
+          },
+          secondary: {
+            main: '#FF6B6B',
+            light: '#FF8E8E',
+            dark: '#CC4444',
+          },
+        },
+        typography: {
+          fontFamily: 'Quicksand, Arial, sans-serif',
+          button: {
+            fontFamily: 'Quicksand, Arial, sans-serif',
+            fontWeight: 600,
+            textTransform: 'none',
+          },
+        },
+        shape: {
+          borderRadius: 12,
+        },
+        components: {
+          MuiButton: {
+            defaultProps: {
+              disableElevation: true,
+            },
+            styleOverrides: {
+              root: {
+                borderRadius: '50px',
+                padding: '8px 24px',
+                fontSize: '14px',
+                fontWeight: 600,
+                fontFamily: 'Quicksand, Arial, sans-serif',
+                textTransform: 'none',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                position: 'relative',
+                overflow: 'hidden',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: '-100%',
+                  width: '100%',
+                  height: '100%',
+                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)',
+                  transition: 'left 0.5s ease',
+                },
+                '&:hover::before': {
+                  left: '100%',
+                },
+                '&:active': {
+                  transform: 'scale(0.97)',
+                },
+              },
+              contained: {
+                background: 'linear-gradient(135deg, #1E90FF 0%, #0055CC 100%)',
+                color: '#fff',
+                boxShadow: '0 2px 8px rgba(30, 144, 255, 0.3)',
+                '&:hover': {
+                  background: 'linear-gradient(135deg, #4DA8FF 0%, #1E90FF 100%)',
+                  boxShadow: '0 4px 16px rgba(30, 144, 255, 0.4)',
+                  transform: 'translateY(-1px)',
+                },
+              },
+              containedSecondary: {
+                background: 'linear-gradient(135deg, #FF6B6B 0%, #CC4444 100%)',
+                boxShadow: '0 2px 8px rgba(255, 107, 107, 0.3)',
+                '&:hover': {
+                  background: 'linear-gradient(135deg, #FF8E8E 0%, #FF6B6B 100%)',
+                  boxShadow: '0 4px 16px rgba(255, 107, 107, 0.4)',
+                  transform: 'translateY(-1px)',
+                },
+              },
+              outlined: ({ theme }) => ({
+                borderWidth: '1.5px',
+                borderColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(30,144,255,0.4)',
+                color: theme.palette.mode === 'dark' ? '#4DA8FF' : '#1E90FF',
+                backdropFilter: 'blur(4px)',
+                background: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(30,144,255,0.03)',
+                '&:hover': {
+                  borderWidth: '1.5px',
+                  borderColor: '#1E90FF',
+                  background: theme.palette.mode === 'dark' ? 'rgba(30,144,255,0.1)' : 'rgba(30,144,255,0.06)',
+                  transform: 'translateY(-1px)',
+                  boxShadow: '0 2px 12px rgba(30,144,255,0.15)',
+                },
+              }),
+              text: ({ theme }) => ({
+                color: theme.palette.mode === 'dark' ? '#90CAF9' : '#1E90FF',
+                '&:hover': {
+                  background: theme.palette.mode === 'dark' ? 'rgba(30,144,255,0.08)' : 'rgba(30,144,255,0.05)',
+                },
+              }),
+              sizeSmall: {
+                padding: '4px 16px',
+                fontSize: '12px',
+              },
+              sizeLarge: {
+                padding: '12px 32px',
+                fontSize: '16px',
+              },
+            },
+          },
+          MuiIconButton: {
+            styleOverrides: {
+              root: {
+                transition: 'all 0.25s ease',
+                '&:hover': {
+                  transform: 'scale(1.1)',
+                },
+                '&:active': {
+                  transform: 'scale(0.95)',
+                },
+              },
+            },
+          },
         },
       }),
     [mode]
