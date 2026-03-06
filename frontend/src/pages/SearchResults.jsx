@@ -634,7 +634,7 @@ const SearchResults = (props) => {
         </Box>
 
         {isLoading ? (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px", padding: "20px 40px", maxWidth: "900px", margin: "0 auto" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "24px", padding: "20px 40px" }}>
             {[1, 2, 3, 4, 5, 6].map((_, index) => (
               <Skeleton
                 animation="wave"
@@ -659,7 +659,7 @@ const SearchResults = (props) => {
           </div>
         ) : (
           <>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px", padding: "0 40px", maxWidth: "900px", margin: "0 auto" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "24px", padding: "20px 40px" }}>
               {filteredArticles.map((article, index) => (
                   <NewsCard
                     key={index}
@@ -674,7 +674,7 @@ const SearchResults = (props) => {
               ))}
             </div>
             {isFetchingNextPage && (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px", padding: "20px 40px", maxWidth: "900px", margin: "0 auto" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "24px", padding: "20px 40px" }}>
                 {[1, 2].map((_, i) => (
                   <Skeleton key={i} animation="wave" variant="rounded" height={200} sx={{ borderRadius: "16px" }} />
                 ))}
