@@ -16,7 +16,7 @@ Welcome to the **NEWSBUZZ**, a one-stop platform to access, explore, and interac
 
 ## About the Project
 
-The **NEWSBUZZ** bridges the gap between readers and high-quality news from multiple sources. Users can personalize their experience by following preferred channels, bookmarking articles, and engaging with content through likes, comments, and shares. The platform also allows interactive features like quizzes to make the news reading experience more enjoyable.
+The **NEWSBUZZ** bridges the gap between readers and high-quality news from multiple sources. Users can personalize their experience by following preferred channels, bookmarking articles, and engaging with content through likes, comments, and shares.
 
 ---
 
@@ -27,7 +27,6 @@ The **NEWSBUZZ** bridges the gap between readers and high-quality news from mult
 - 🏷️ **Personalized Feed**: Follow/unfollow channels or mute them to curate your feed.  
 - 💬 **Article Engagement**: Like, share, and comment on articles.  
 - 📌 **Bookmarks**: Save articles for later reference.  
-- 🧩 **Quizzes**: Participate in topic-specific quizzes and view your scores.  
 - 🕒 **Reading History**: Access previously read articles.  
 - 🔒 **User Authentication**: Secure signup/login options with email verification.   
 - 🔔 **Notifications**: Stay updated with new articles and interactions.  

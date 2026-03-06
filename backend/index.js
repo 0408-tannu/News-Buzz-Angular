@@ -19,7 +19,6 @@ import {router as quicksearchroute} from './routes/rquicksearch.js';
 import {router as sendemailroute} from './routes/rsendemail.js';
 import {router as changepasswordroute }from './routes/rchangepassword.js';
 import {router as providerroute} from './routes/rprovider.js';
-import { router as quiz_router } from './routes/rquiz.js';
 import { router as history_router } from './routes/rhistory.js';
 import { router as mute_router } from './routes/rmute.js';
 import { loadProviderCache, refreshAllProviderLogos } from './utils/providerCache.js';
@@ -78,7 +77,6 @@ app.use("/api/quicksearch", checkAuth, quicksearchroute);
 app.use("/api/sendemail", sendemailroute);
 app.use("/api/changepassword", checkAuth, changepasswordroute);
 app.use("/api/provider", checkAuth, providerroute);
-app.use("/api/quiz", checkAuth, quiz_router);
 app.use("/api/mute", checkAuth, mute_router);
 app.use("/api/history", checkAuth, history_router);
 

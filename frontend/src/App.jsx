@@ -16,14 +16,10 @@ import { ThemeContextProvider } from './context/ThemeContext';
 import UserProfile from './pages/UserProfile';
 import NewsProviderPageAll from './pages/NewsProviderPageAll.jsx';
 import NewsProviderPageFollowing from './pages/NewsProviderPageFollowing.jsx';
-import QuizApp from './components/QuizApp.jsx';
 import History from './pages/History';
 import ProviderPage from './pages/ProviderPage.jsx';
 import AboutUs from './pages/AboutUs.jsx';
 import ContactUs from './pages/ContactUs.jsx';
-import { Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import QuizLogo from './components/QuizLogo.jsx';
 import { GET } from './api';
 
 const theme = createTheme({
@@ -35,22 +31,18 @@ const theme = createTheme({
 function App() {
   const [open, setOpen] = useState(false);
   const [role, setRole] = useState('');
-  const navigate = useNavigate();
   const location = useLocation();
 
   // Define routes where ThemeProvider and ThemeContextProvider are not needed
   const authRoutes = ['/login', '/signup'];
   const isAuthRoute = authRoutes.includes(location.pathname);
 
-  const validRoutes = ['/', '/login', '/signup', '/search', '/myfeed', '/history', '/account', '/bookmark', '/providers/all', '/providers/following', '/quiz', '/about', '/contact'];
-  const validRoutesForQuiz = ['/', '/search', '/myfeed', '/history', '/account', '/bookmark', '/providers/all', '/providers/following'];
+  const validRoutes = ['/', '/login', '/signup', '/search', '/myfeed', '/history', '/account', '/bookmark', '/providers/all', '/providers/following', '/about', '/contact'];
   const hideNavbar_SidebarRoutes = ['/login', '/signup'];
 
   const shouldShowNavbar_Sidebar =
     validRoutes.includes(location.pathname.split('?')[0]) &&
     !hideNavbar_SidebarRoutes.includes(location.pathname.split('?')[0]);
-
-  const shouldShowQuizButton = validRoutesForQuiz.includes(location.pathname.split('?')[0]);
 
   const [searchParams] = useSearchParams();
   const queries = {
@@ -61,15 +53,6 @@ function App() {
     location: searchParams.get('location'),
   };
 
-  const handleQuizButtonClick = () => {
-    const isLoggedIn = window.localStorage.getItem('token'); // Check if token exists
-
-    if (isLoggedIn) {
-      navigate('/quiz');
-    } else {
-      navigate('/login');
-    }
-  };
 
 
   useEffect(() => {
@@ -100,27 +83,6 @@ function App() {
         </Box>
       )}
 
-      {shouldShowQuizButton && window.localStorage.getItem('token') && role !== "PROVIDER" && (
-        <Button
-          variant="contained"
-          onClick={handleQuizButtonClick}
-          sx={{
-            position: 'fixed',
-            top: 150,
-            right: 16,
-            zIndex: 10000000,
-            padding: 0,
-            minWidth: 'auto',
-            backgroundColor: 'transparent',
-            '&:hover': {
-              backgroundColor: 'rgba(0, 0, 0, 0.1)', // Subtle hover effect
-            },
-          }}
-        >
-          <QuizLogo size={48} />
-        </Button>
-      )}
-
       <Box component="main" sx={{ flexGrow: 1, ml: `${open ? '-120px' : '60px'}`, padding: '24px', position: 'relative' }}>
         <AppBar position="fixed" sx={{ top: 0 }}>
           <Box sx={{ marginLeft: '60px' }}>
@@ -147,7 +109,6 @@ function App() {
           {role !== 'READER' && <Route path="/providers/create" element={<ProviderPage />} />}
           {role === 'PROVIDER' && <Route path="/" element={<ProviderPage />} />}
           <Route path="*" element={<PageNotFound />} />
-          <Route path="/quiz" element={<QuizApp />} />
           <Route path="/history" element={<History />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/contact" element={<ContactUs />} />
