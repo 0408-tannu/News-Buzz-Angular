@@ -83,14 +83,14 @@ function App() {
         </Box>
       )}
 
-      <Box component="main" sx={{ flexGrow: 1, ml: `${open ? '-120px' : '60px'}`, position: 'relative' }}>
-        <AppBar position="sticky" sx={{ top: 0, zIndex: (theme) => theme.zIndex.appBar, backgroundColor: 'transparent', backgroundImage: 'none' }} elevation={0}>
+      <Box component="main" sx={{ flexGrow: 1, ml: `${open ? '-120px' : '60px'}` }}>
+        <AppBar position="sticky" sx={{ top: 0, zIndex: 1100, backgroundColor: 'transparent', backgroundImage: 'none' }} elevation={0}>
           <Box sx={{ marginLeft: '60px' }}>
             {shouldShowNavbar_Sidebar && role !== "PROVIDER" && <Navbar />}
           </Box>
         </AppBar>
 
-        <Box sx={{ padding: '24px' }}>
+        <Box sx={{ padding: '24px', position: 'relative' }}>
           <Routes>
           {role !== "PROVIDER" && <Route path="/" element={window.localStorage.getItem('token') ? <LoggedHome /> : <Home />} />}
           <Route path="/login" element={<Login />} />
