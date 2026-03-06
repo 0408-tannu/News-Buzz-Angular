@@ -1,88 +1,74 @@
 import React, { useContext } from 'react';
 import { ThemeContext } from '../context/ThemeContext';
 
-const Logo = ({ height = 44 }) => {
+const Logo = ({ height = 50 }) => {
   const { mode } = useContext(ThemeContext);
-  const textColor = mode === 'dark' ? '#f0f0f0' : '#1a1a2e';
+  const textColor = mode === 'dark' ? '#ffffff' : '#1a1a2e';
 
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 260 56"
+      viewBox="0 0 300 64"
       height={height}
       fill="none"
+      style={{ display: 'block' }}
     >
       <defs>
-        <linearGradient id="logoGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#1e90ff" />
-          <stop offset="100%" stopColor="#0055cc" />
+        <linearGradient id="logoBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#4facfe" />
+          <stop offset="100%" stopColor="#0066ff" />
         </linearGradient>
-        <linearGradient id="logoGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#ff6b35" />
-          <stop offset="100%" stopColor="#e63946" />
+        <linearGradient id="logoOrange" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#ff9a56" />
+          <stop offset="100%" stopColor="#ff5e62" />
         </linearGradient>
+        <filter id="logoShadow" x="-10%" y="-10%" width="130%" height="140%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#0066ff" floodOpacity="0.25" />
+        </filter>
       </defs>
 
-      {/* Icon: Rounded square with "N" */}
-      <rect x="4" y="8" width="40" height="40" rx="10" fill="url(#logoGrad1)" />
+      {/* Icon: Globe/newspaper hybrid */}
+      <g filter="url(#logoShadow)">
+        <circle cx="30" cy="32" r="24" fill="url(#logoBlue)" />
+        {/* Lightning bolt / breaking news flash */}
+        <path
+          d="M24 18l8 0l-3 10h6l-12 18l3-12h-6z"
+          fill="white"
+          opacity="0.95"
+        />
+      </g>
 
-      {/* Letter N inside the icon */}
-      <path
-        d="M14 38V18h3l12 14V18h3v20h-3L17 24v14h-3z"
-        fill="white"
-      />
-
-      {/* Buzz signal waves */}
-      <path
-        d="M42 16c3-3 7-4 7 0s-4 3-7 0"
-        stroke="url(#logoGrad2)"
-        strokeWidth="2"
-        fill="none"
-        strokeLinecap="round"
-      />
-      <path
-        d="M44 10c5-4 10-5 10 0s-5 4-10 0"
-        stroke="url(#logoGrad2)"
-        strokeWidth="1.8"
-        fill="none"
-        strokeLinecap="round"
-        opacity="0.7"
-      />
-      <path
-        d="M46 5c6-4 12-5 12 0s-6 4-12 0"
-        stroke="url(#logoGrad2)"
-        strokeWidth="1.5"
-        fill="none"
-        strokeLinecap="round"
-        opacity="0.4"
-      />
-
-      {/* "News" text */}
+      {/* "News" text - bold dark */}
       <text
-        x="62"
-        y="38"
-        fontFamily="'Quicksand', 'Segoe UI', sans-serif"
-        fontSize="30"
-        fontWeight="700"
+        x="64"
+        y="43"
+        fontFamily="'Quicksand', 'Poppins', sans-serif"
+        fontSize="34"
+        fontWeight="800"
         fill={textColor}
+        letterSpacing="-0.5"
       >
         News
       </text>
 
-      {/* "Buzz" text with gradient */}
+      {/* "Buzz" text - gradient blue */}
       <text
-        x="155"
-        y="38"
-        fontFamily="'Quicksand', 'Segoe UI', sans-serif"
-        fontSize="30"
-        fontWeight="700"
-        fill="url(#logoGrad1)"
+        x="168"
+        y="43"
+        fontFamily="'Quicksand', 'Poppins', sans-serif"
+        fontSize="34"
+        fontWeight="800"
+        fill="url(#logoBlue)"
+        letterSpacing="-0.5"
       >
         Buzz
       </text>
 
-      {/* Accent dot */}
-      <circle cx="243" cy="35" r="4" fill="url(#logoGrad2)" />
+      {/* Underline accent bar */}
+      <rect x="168" y="48" width="55" height="3.5" rx="2" fill="url(#logoOrange)" />
+
+      {/* Small dot indicator */}
+      <circle cx="263" cy="42" r="5" fill="url(#logoOrange)" />
     </svg>
   );
 };

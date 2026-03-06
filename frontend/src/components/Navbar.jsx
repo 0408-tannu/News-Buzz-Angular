@@ -1153,7 +1153,7 @@ const Navbar = () => {
         <div className="container-fluid">
           {/* <Link className={`navbar-brand ${mode === 'dark' ? 'text-dark' : 'text-light'}`} to="/">NewsBuzz</Link> */}
           <Link className={`navbar-brand ${mode === 'dark' ? 'text-light' : 'text-dark'}`} to="/">
-            <Logo height={44} />
+            <Logo height={52} />
           </Link>
 
 
