@@ -889,7 +889,7 @@ import TravelExploreRoundedIcon from '@mui/icons-material/TravelExploreRounded';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 import Tooltip from '@mui/material/Tooltip';
 import toast from 'react-hot-toast';
-import logo from '../images/logo.jpg';
+import Logo from './Logo';
 
 const Navbar = () => {
 
@@ -1061,9 +1061,10 @@ const Navbar = () => {
 
 
 
-  const [quickSearchText, setQuickSearchText] = useState(['']);
+  const [quickSearchText, setQuickSearchText] = useState([]);
   const [newQuickSearch, setNewQuickSearch] = useState('');
   const [showAddBox, setShowAddBox] = useState(false);
+  const [quickSearchLoading, setQuickSearchLoading] = useState(true);
 
 
   useEffect(() => {
@@ -1073,12 +1074,10 @@ const Navbar = () => {
 
       if (response.data?.success)
         setQuickSearchText(response.data.quickSearchText);
-      // else if (response.data?.caught) {
-      //   navigate('/login'); return;
-      //   toast.error(response.data?.message);
-      // }
     }).catch((error) => {
       console.error('Error fetching quick search data:', error);
+    }).finally(() => {
+      setQuickSearchLoading(false);
     });
   }, [navigate]);
 
@@ -1151,9 +1150,8 @@ const Navbar = () => {
     <>
       <nav className="navbar navbar-expand-lg" style={navbarStyle}>
         <div className="container-fluid">
-          {/* <Link className={`navbar-brand ${mode === 'dark' ? 'text-dark' : 'text-light'}`} to="/">NewsBuzz</Link> */}
-          <Link className={`navbar-brand ${mode === 'dark' ? 'text-light' : 'text-dark'}`} to="/">
-            <img src={logo} alt="NewsBuzz" style={{ height: '48px', borderRadius: '8px' }} />
+          <Link className={`navbar-brand`} to="/" style={{ textDecoration: 'none' }}>
+            <Logo height={42} />
           </Link>
 
 
@@ -1181,7 +1179,7 @@ const Navbar = () => {
 
 
             {TokenExist && (<>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px', flex: 1, paddingRight: '10px' }}>
                   <Box
                     component="form"
                     onSubmit={handleSearch}
@@ -1529,47 +1527,46 @@ const Navbar = () => {
                   </div>
                 )}
               </div>
-
-                <Tooltip title="My Account" placement="bottom" arrow>
-                  <Button
-                    onClick={() => navigate('/account')}
-                    startIcon={<AccountCircleRoundedIcon sx={{ fontSize: 42 }} />}
-                    sx={{
-                      color: mode === 'dark' ? '#fff' : '#1a1a2e',
-                      textTransform: 'none',
-                      fontFamily: 'Quicksand, Arial, sans-serif',
-                      fontWeight: 800,
-                      fontSize: '1.15rem',
-                      letterSpacing: '0.3px',
-                      px: 2,
-                      py: 0.8,
-                      borderRadius: '50px',
-                      border: mode === 'dark' ? '1.5px solid rgba(255,255,255,0.15)' : '1.5px solid rgba(0,0,0,0.1)',
-                      whiteSpace: 'nowrap',
-                      marginLeft: 'auto',
-                      '&:hover': {
-                        backgroundColor: mode === 'dark' ? 'rgba(30,144,255,0.12)' : 'rgba(30,144,255,0.06)',
-                        borderColor: 'rgb(30,144,255)',
-                        color: 'rgb(30,144,255)',
-                      },
-                      transition: 'all 0.25s ease',
-                    }}
-                  >
-                    My Account
-                  </Button>
-                </Tooltip>
             </>)}
 
-            <form className="d-flex mx-5">
-              {TokenExist ? (
-                <></>
-              ) : (
-                <>
-                  <Link className="btn btn-primary mx-1" to="/login" role="button">Login</Link>
-                  <Link className="btn btn-primary mx-1" to="/signup" role="button">Signup</Link>
-                </>
-              )}
-            </form>
+            {!TokenExist && (
+              <div style={{ marginLeft: 'auto' }}>
+                <Link className="btn btn-primary mx-1" to="/login" role="button">Login</Link>
+                <Link className="btn btn-primary mx-1" to="/signup" role="button">Signup</Link>
+              </div>
+            )}
+
+            {TokenExist && (
+              <Tooltip title="My Account" placement="bottom" arrow>
+                <Button
+                  onClick={() => navigate('/account')}
+                  startIcon={<AccountCircleRoundedIcon sx={{ fontSize: 42 }} />}
+                  sx={{
+                    color: mode === 'dark' ? '#fff' : '#1a1a2e',
+                    textTransform: 'none',
+                    fontFamily: 'Quicksand, Arial, sans-serif',
+                    fontWeight: 800,
+                    fontSize: '1.15rem',
+                    letterSpacing: '0.3px',
+                    px: 2,
+                    py: 0.8,
+                    borderRadius: '50px',
+                    border: mode === 'dark' ? '1.5px solid rgba(255,255,255,0.15)' : '1.5px solid rgba(0,0,0,0.1)',
+                    whiteSpace: 'nowrap',
+                    marginLeft: 'auto',
+                    mr: 1,
+                    '&:hover': {
+                      backgroundColor: mode === 'dark' ? 'rgba(30,144,255,0.12)' : 'rgba(30,144,255,0.06)',
+                      borderColor: 'rgb(30,144,255)',
+                      color: 'rgb(30,144,255)',
+                    },
+                    transition: 'all 0.25s ease',
+                  }}
+                >
+                  My Account
+                </Button>
+              </Tooltip>
+            )}
           </div>
         </div >
         <div style={afterStyle}></div>
@@ -1685,7 +1682,31 @@ const Navbar = () => {
         </div>
 
 
-        {quickSearchText?.map((text, index) => (
+        {quickSearchLoading ? (
+          <>
+            {[1, 2, 3, 4, 5].map((_, i) => (
+              <Box
+                key={i}
+                sx={{
+                  width: `${65 + i * 12}px`,
+                  height: '32px',
+                  borderRadius: '50px',
+                  m: 0.3,
+                  background: mode === 'dark'
+                    ? 'linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.06) 75%)'
+                    : 'linear-gradient(90deg, rgba(0,0,0,0.06) 25%, rgba(0,0,0,0.10) 50%, rgba(0,0,0,0.06) 75%)',
+                  backgroundSize: '200% 100%',
+                  animation: 'shimmer 1.5s infinite linear',
+                  '@keyframes shimmer': {
+                    '0%': { backgroundPosition: '200% 0' },
+                    '100%': { backgroundPosition: '-200% 0' },
+                  },
+                }}
+              />
+            ))}
+          </>
+        ) : (
+          quickSearchText?.map((text, index) => (
           <div key={index}>
             <Button
               onClick={() => navigate(`/search?q=${encodeURIComponent(text)}`)}
@@ -1715,7 +1736,8 @@ const Navbar = () => {
               {text}
             </Button>
           </div>
-        ))}
+        ))
+        )}
 
         <div style={{ marginLeft: 'auto' }}>
           <Button

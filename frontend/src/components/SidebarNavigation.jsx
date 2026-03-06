@@ -60,7 +60,6 @@ const SidebarNavigation = ({ open, setOpen }) => {
     { title: "Bookmark", icon: <BookmarkRoundedIcon />, path: "/bookmark" },
     { title: "History", icon: <HistoryRoundedIcon />, path: "/history" },
     { kind: "divider" },
-    { title: "Account", icon: <AccountCircleRoundedIcon />, path: "/account" },
   ];
 
   const iconSize = 28;

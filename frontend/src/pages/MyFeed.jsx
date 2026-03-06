@@ -420,7 +420,7 @@ const MyFeed = () => {
           />
         </Box>
 
-        <div style={{ marginTop: "50px", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "8px", padding: "0 20px" }}>
+        <div style={{ marginTop: "50px", display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px", padding: "0 40px", maxWidth: "900px", margin: "50px auto 0" }}>
                 {filteredArticles.map((article, index) => (
                   <FeedNewsCard
                     key={index}
@@ -436,39 +436,17 @@ const MyFeed = () => {
         </div>
 
         {isLoading && (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center", // Centers horizontally
-              alignItems: "center", // Centers vertically
-              minHeight: "50vh", // Minimum height to ensure vertical centering
-              width: "100%", // Takes full width
-            }}
-          >
-            <Stack spacing={2} sx={{ width: "100%", alignItems: "center" }}>
-              {" "}
-              {/* Center stack items horizontally */}
-              {[1, 2, 3, 4, 5, 6, 7].map((_, index) => (
-                <Box
-                  key={index}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center", // Centers the Skeleton inside the Box
-                    width: "100%",
-                    marginY: 1.4,
-                  }}
-                >
-                  <Skeleton
-                    animation="wave"
-                    variant="rounded"
-                    width="80%" // Use percentage width for Skeleton
-                    height={160}
-                    sx={{ maxWidth: 800 }} // Limit the max width
-                  />
-                </Box>
-              ))}
-            </Stack>
-          </Box>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px", padding: "20px 40px", maxWidth: "900px", margin: "0 auto" }}>
+            {[1, 2, 3, 4, 5, 6].map((_, index) => (
+              <Skeleton
+                key={index}
+                animation="wave"
+                variant="rounded"
+                height={200}
+                sx={{ borderRadius: "16px" }}
+              />
+            ))}
+          </div>
         )}
 
         {isError && (

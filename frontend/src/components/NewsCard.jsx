@@ -774,8 +774,7 @@ const NewsCard = (props) => {
         display: "flex",
         alignItems: "stretch",
         justifyContent: "center",
-        width: { xs: "100%", sm: "48%", md: "380px" },
-        maxWidth: 420,
+        width: "100%",
         margin: "10px",
         position: "relative",
         "&:hover .action-buttons": {

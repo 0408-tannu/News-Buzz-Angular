@@ -634,18 +634,16 @@ const SearchResults = (props) => {
         </Box>
 
         {isLoading ? (
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Stack spacing={2} sx={{ display: 'flex', justifyContent: 'center' }}>
-              {[1, 2, 3, 4, 5, 6, 7].map((_, index) => (
-                <Skeleton
-                  animation="wave"
-                  key={index}
-                  variant="rounded"
-                  width={800}
-                  height={160}
-                />
-              ))}
-            </Stack>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px", padding: "20px 40px", maxWidth: "900px", margin: "0 auto" }}>
+            {[1, 2, 3, 4, 5, 6].map((_, index) => (
+              <Skeleton
+                animation="wave"
+                key={index}
+                variant="rounded"
+                height={200}
+                sx={{ borderRadius: "16px" }}
+              />
+            ))}
           </div>
         ) : isError ? (
           <div className="alert alert-warning" role="alert">
@@ -661,7 +659,7 @@ const SearchResults = (props) => {
           </div>
         ) : (
           <>
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '8px', padding: '0 20px' }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px", padding: "0 40px", maxWidth: "900px", margin: "0 auto" }}>
               {filteredArticles.map((article, index) => (
                   <NewsCard
                     key={index}
@@ -676,8 +674,10 @@ const SearchResults = (props) => {
               ))}
             </div>
             {isFetchingNextPage && (
-              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-                <Skeleton animation="wave" variant="rounded" width={800} height={160} />
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px", padding: "20px 40px", maxWidth: "900px", margin: "0 auto" }}>
+                {[1, 2].map((_, i) => (
+                  <Skeleton key={i} animation="wave" variant="rounded" height={200} sx={{ borderRadius: "16px" }} />
+                ))}
               </div>
             )}
           </>

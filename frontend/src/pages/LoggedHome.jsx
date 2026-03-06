@@ -650,18 +650,16 @@ const LoggedHome = () => {
         />
       </Box>
       {isLoading ? (
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <Stack spacing={2} sx={{ display: "flex", justifyContent: "center" }}>
-            {[1, 2, 3, 4, 5, 6, 7].map((item, index) => (
-              <Skeleton
-                animation="wave"
-                key={index}
-                variant="rounded"
-                width={800}
-                height={140}
-              />
-            ))}
-          </Stack>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px", padding: "20px 40px", maxWidth: "900px", margin: "0 auto" }}>
+          {[1, 2, 3, 4, 5, 6].map((item, index) => (
+            <Skeleton
+              animation="wave"
+              key={index}
+              variant="rounded"
+              height={200}
+              sx={{ borderRadius: "16px" }}
+            />
+          ))}
         </div>
       ) : isError ? (
         <div style={{ display: "flex", justifyContent: "center" }}>
@@ -673,19 +671,10 @@ const LoggedHome = () => {
           next={loadMoreArticles}
           hasMore={hasMore}
           loader={
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                padding: "20px",
-              }}
-            >
-              <Skeleton
-                animation="wave"
-                variant="rounded"
-                width={800}
-                height={140}
-              />
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px", padding: "20px 40px", maxWidth: "900px", margin: "0 auto" }}>
+              {[1, 2].map((_, i) => (
+                <Skeleton key={i} animation="wave" variant="rounded" height={200} sx={{ borderRadius: "16px" }} />
+              ))}
             </div>
           }
           endMessage={
@@ -695,7 +684,7 @@ const LoggedHome = () => {
           }
           style={{ overflow: "visible" }}
         >
-          <div style={{ marginTop: "50px", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "8px", padding: "0 20px" }}>
+          <div style={{ marginTop: "50px", display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px", padding: "0 40px", maxWidth: "900px", margin: "50px auto 0" }}>
                   {displayedArticles.map(
                     (article, index) =>
                       article && (

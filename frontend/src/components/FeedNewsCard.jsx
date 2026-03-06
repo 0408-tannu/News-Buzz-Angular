@@ -770,8 +770,7 @@ const FeedNewsCard = (props) => {
           display: "flex",
           justifyContent: "center",
           margin: "10px",
-          width: { xs: "100%", sm: "48%", md: "380px" },
-          maxWidth: 420,
+          width: "100%",
           height: "auto",
         }}
       >
@@ -806,6 +805,10 @@ const FeedNewsCard = (props) => {
                 : mode === "light"
                   ? "#ffffff"
                   : "rgb(48, 48, 48)",
+              "& .feed-action-buttons": {
+                opacity: 1,
+                visibility: "visible",
+              },
             },
           }}
         >
@@ -960,7 +963,7 @@ const FeedNewsCard = (props) => {
               {props.time}
             </Typography>
 
-            <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box className="feed-action-buttons" sx={{ display: "flex", alignItems: "center", opacity: 0, visibility: "hidden", transition: "all 0.25s ease" }}>
               <Tooltip title="Save" placement="bottom" arrow>
                 <IconButton
                   sx={{
