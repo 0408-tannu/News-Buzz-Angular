@@ -1177,15 +1177,6 @@ const Navbar = () => {
                   About Us
                 </Link>
               </li>
-              <li className="nav-item">
-                <Link
-                  className={`nav-link ${mode === 'dark' ? 'text-light' : 'text-dark'}`}
-                  to="/contact"
-                  style={{ fontSize: '16px', fontFamily: "'Quicksand', sans-serif", fontWeight: 600 }}
-                >
-                  Contact Us
-                </Link>
-              </li>
             </ul>
 
 
