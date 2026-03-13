@@ -40,7 +40,7 @@ const DELETE = async (url, data) => {
     "authorization": "Bearer " + localStorage.getItem("token")
   };
   try {
-    const response = await axios.delete(config.BACKEND_API + url, data, { headers });
+    const response = await axios.delete(config.BACKEND_API + url, { data, headers });
     return response;
   } catch (error) {
     console.error("POST request error:", error);

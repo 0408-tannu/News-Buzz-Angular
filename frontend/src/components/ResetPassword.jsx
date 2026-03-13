@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import config from '../config';
 import {
   Card,
   Box,
@@ -120,8 +121,8 @@ const ResetPassword = ({ setShowModal }) => {
       return;
     }
 
-    const EncryptOldPassword = CryptoJS.AES.encrypt(oldPassword, "news-aggregator-secret").toString();
-    const EncryptNewPassword = CryptoJS.AES.encrypt(newPassword, "news-aggregator-secret").toString();
+    const EncryptOldPassword = CryptoJS.AES.encrypt(oldPassword, config.PWD_SECRET).toString();
+    const EncryptNewPassword = CryptoJS.AES.encrypt(newPassword, config.PWD_SECRET).toString();
 
     const response = await POST('/api/changepassword', { password: EncryptNewPassword, CurrentPassword: EncryptOldPassword });
     // console.log(response.data);

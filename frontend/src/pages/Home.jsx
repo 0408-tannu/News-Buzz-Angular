@@ -364,18 +364,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import InfiniteScroll from "react-infinite-scroll-component";
 import UnLoggedNewsCard from "../components/UnLoggedNewsCard.jsx";
 import { useNavigate } from "react-router-dom";
-import { Grid } from "@mui/material";
 gsap.registerPlugin(ScrollTrigger);
-
-const parentstyle = {
-  // backgroundColor: "black",
-  marginTop: "100px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  padding: "5px",
-  margin: "5px",
-};
 
 const Home = () => {
   const { mode } = useContext(ThemeContext);
