@@ -48,7 +48,7 @@ async function sendEmail(username, email, code, CheckUserExist) {
     return result;
   } catch (err) {
     console.error("Error sending email:", err);
-    return err;
+    throw err;
   }
 }
 

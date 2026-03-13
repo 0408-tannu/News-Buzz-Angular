@@ -124,13 +124,12 @@ const ForgotPassword = async (req, res) => {
 
 
   try {
-
-    await sendEmail(username, email, code, CheckUserExist).then((result) => console.log('Email sent...\n', result)).catch((error) => console.log(error.message));
+    await sendEmail(username, email, code, CheckUserExist);
+    console.log('Email sent successfully');
+  } catch (err) {
+    console.error('Failed to send email:', err);
+    return res.status(210).json({ success: false, message: "Failed to send verification email. Please try again." });
   }
-  catch (err) {
-    return res.status(210).json({ success: false, message: `Failed to send email\n ${err}` });
-  }
-
 
   return res.status(202).json({ success: true, message: "Verification code sent successfully", code: code });
 };
