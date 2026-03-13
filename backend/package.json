@@ -31,6 +31,7 @@
     "puppeteer-cluster": "^0.23.0",
     "puppeteer-core": "^23.8.0",
     "random-useragent": "^0.5.0",
+    "resend": "^6.9.3",
     "rss-parser": "^3.13.0",
     "uuid": "^11.0.3"
   },
