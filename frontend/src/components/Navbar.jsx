@@ -865,7 +865,6 @@
 import React, { useContext, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ThemeContext } from '../context/ThemeContext';
-import ClearIcon from '@mui/icons-material/Clear';
 import IconButton from '@mui/material/IconButton';
 import { TextField, Typography } from '@mui/material';
 import { useEffect } from 'react';
@@ -874,7 +873,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { Box, Button, Menu } from '@mui/material';
+import { Box, Button, Menu, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
@@ -908,6 +907,9 @@ const Navbar = () => {
     setCountryCode(selectedCountry.isoCode);  // Extract and store ISO code
   };
 
+
+  const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
+  const [topicToRemove, setTopicToRemove] = useState('');
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElAddBox, setAnchorElAddBox] = React.useState(null);
@@ -1105,33 +1107,32 @@ const Navbar = () => {
   };
 
 
-  const handleRightClick = async (e, textToRemove) => {
+  const handleRightClick = (e, textToRemove) => {
     e.preventDefault();
-    const confirmed = window.confirm(`Do you want to remove "${textToRemove}"?`);
-    if (confirmed) {
+    setTopicToRemove(textToRemove);
+    setRemoveDialogOpen(true);
+  };
 
-      const response = await POST('/api/quicksearch/delete', { quickSearchText: textToRemove });
-      try {
-        console.log(response.data);
-        if (response.data?.caught) {
-          console.log("caught");
-          navigate('/login'); return;
-          // toast.error(response.data?.message);
-        }
-        else if (response.data?.success) {
-          console.log("success");
-          setQuickSearchText(quickSearchText.filter(text => text !== textToRemove)); // Remove the button from UI
-          toast.success(response.data?.message);
-        }
-        else {
-          toast.error(response.data?.message);
-        }
+  const handleConfirmRemove = async () => {
+    setRemoveDialogOpen(false);
+    try {
+      const response = await POST('/api/quicksearch/delete', { quickSearchText: topicToRemove });
+      if (response.data?.caught) {
+        navigate('/login'); return;
       }
-      catch (error) {
-        console.error('Error deleting quick search:', error);
-        toast.error('Error deleting quick search');
+      else if (response.data?.success) {
+        setQuickSearchText(quickSearchText.filter(text => text !== topicToRemove));
+        toast.success(response.data?.message);
+      }
+      else {
+        toast.error(response.data?.message);
       }
     }
+    catch (error) {
+      console.error('Error deleting quick search:', error);
+      toast.error('Error deleting quick search');
+    }
+    setTopicToRemove('');
   };
 
 
@@ -1399,12 +1400,6 @@ const Navbar = () => {
 
                   <div style={{ ...getAdvancedSearchBoxStyle(), zIndex: 999999999, }} onClick={(e) => { e.stopPropagation(); }}>
                     <h3 style={{ color: mode === 'light' ? 'black' : 'white', textAlign: "center" }}> Advanced Search</h3>
-                    <IconButton
-                      style={{ position: 'absolute', top: '0px', right: '0px' }}
-                      onClick={() => setAdvancedSearchOpen(false)}
-                    >
-                      <ClearIcon onClick={() => setAdvancedSearchOpen(false)} />
-                    </IconButton>
 
 
 
@@ -1995,6 +1990,84 @@ const Navbar = () => {
 
       </Box >}
 
+      {/* Custom Remove Topic Dialog */}
+      <Dialog
+        open={removeDialogOpen}
+        onClose={() => setRemoveDialogOpen(false)}
+        PaperProps={{
+          sx: {
+            borderRadius: '16px',
+            bgcolor: mode === 'dark' ? '#1e1e2e' : '#fff',
+            border: `1px solid ${mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'}`,
+            boxShadow: mode === 'dark'
+              ? '0 16px 48px rgba(0,0,0,0.6)'
+              : '0 16px 48px rgba(0,0,0,0.12)',
+            minWidth: '340px',
+            px: 1,
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            fontFamily: "'Quicksand', sans-serif",
+            fontWeight: 700,
+            fontSize: '20px',
+            color: mode === 'dark' ? '#fff' : '#1a1a2e',
+            pb: 0.5,
+          }}
+        >
+          Remove Topic
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText
+            sx={{
+              fontFamily: "'Quicksand', sans-serif",
+              fontWeight: 500,
+              fontSize: '15px',
+              color: mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',
+            }}
+          >
+            Are you sure you want to remove "<strong style={{ color: mode === 'dark' ? '#90CAF9' : '#1E90FF' }}>{topicToRemove}</strong>"?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
+          <Button
+            onClick={() => setRemoveDialogOpen(false)}
+            sx={{
+              fontFamily: "'Quicksand', sans-serif",
+              fontWeight: 600,
+              textTransform: 'none',
+              borderRadius: '10px',
+              color: mode === 'dark' ? '#aaa' : '#666',
+              px: 2.5,
+              '&:hover': {
+                backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
+              },
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleConfirmRemove}
+            variant="contained"
+            sx={{
+              fontFamily: "'Quicksand', sans-serif",
+              fontWeight: 700,
+              textTransform: 'none',
+              borderRadius: '10px',
+              background: 'linear-gradient(135deg, #e53935 0%, #c62828 100%)',
+              boxShadow: '0 2px 8px rgba(229,57,53,0.3)',
+              px: 2.5,
+              '&:hover': {
+                background: 'linear-gradient(135deg, #f44336 0%, #d32f2f 100%)',
+                boxShadow: '0 4px 16px rgba(229,57,53,0.4)',
+              },
+            }}
+          >
+            Remove
+          </Button>
+        </DialogActions>
+      </Dialog>
 
     </>
   );
