@@ -3,33 +3,23 @@
 import { quickSearch_model } from "../models/mquicksearch.js";
 
 const getQuickSearch = async (req, res) => {
+  try {
+    const user_id = req.user.id;
 
-  // console.log("getQuickSearch");
+    if (!user_id) {
+      return res.status(210).json({ success: false, message: "User id is required" });
+    }
 
-  // try {
+    const quickSearchUser = await quickSearch_model.findOne({ user_id });
 
-  const user_id = req.user.id;
+    if (!quickSearchUser) {
+      return res.status(210).json({ success: false, message: "No quick search found for the user" });
+    }
 
-  if (!user_id) {
-    return res.status(210).json({ success: false, message: "User id is required" });
+    res.status(202).json({ success: true, quickSearchText: quickSearchUser.quickSearchText });
+  } catch (error) {
+    res.status(210).json({ success: false, message: error.message });
   }
-
-  const quickSearchUser = await quickSearch_model.findOne({ user_id });
-
-  // console.log("quickSearchUser", quickSearchUser);
-
-  if (!quickSearchUser) {
-    return res.status(210).json({ success: false, message: "No quick search found for the user" });
-  }
-
-  // console.log("quickSearchUser.quickSearchText", quickSearchUser.quickSearchText);
-
-
-  res.status(202).json({ success: true, quickSearchText: quickSearchUser.quickSearchText });
-
-  // } catch (error) {
-  //   res.status(210).json({ message: error.message });
-  // }
 }
 
 

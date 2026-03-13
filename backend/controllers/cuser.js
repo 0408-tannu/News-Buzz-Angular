@@ -130,26 +130,31 @@ const signUpPost = async (req, res) => {
 
 
 const getUserProfile = async (req, res) => {
-  const user = await usermodel.findById(req.user.id).select("-password");
-  return res.status(202).json({ success: true, user: user });
+  try {
+    const user = await usermodel.findById(req.user.id).select("-password");
+    return res.status(202).json({ success: true, user: user });
+  } catch (error) {
+    return res.status(210).json({ success: false, message: error.message });
+  }
 }
 
 
 const updateUserProfile = async (req, res) => {
+  try {
+    const user =
+      await usermodel.findByIdAndUpdate
+        (req.user.id,
+          req.body,
+          { new: true }
+        );
 
-
-
-  const user =
-    await usermodel.findByIdAndUpdate
-      (req.user.id,
-        req.body,
-        { new: true }
-      );
-
-  if (!user) {
-    return res.status(210).json({ success: false, message: "User not found" });
+    if (!user) {
+      return res.status(210).json({ success: false, message: "User not found" });
+    }
+    return res.status(202).json({ success: true, message: "Profile Updated Successfully" });
+  } catch (error) {
+    return res.status(210).json({ success: false, message: error.message });
   }
-  return res.status(202).json({ success: true, message: "Profile Updated Successfully" });
 }
 
 

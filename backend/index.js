@@ -93,6 +93,14 @@ app.get('/api/refresh-provider-logos', async (req, res) => {
 
 
 
+// Global error handler to prevent unhandled errors from crashing the server
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err.message);
+});
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Rejection:', err.message);
+});
+
 app.listen(process.env.PORT || port, () => {
 	console.log(`Listening on port ${port}`);
 });
