@@ -1,44 +1,118 @@
-import { db } from '../config/firebase.js';
+// const newsProvidermodel = require('../models/mnewsProvider.js');
+// const usermodel = require('../models/muser.js');
+// const cloudinary_v2 = require('../utils/cloudinary').v2;
 
-const newsProvidersCol = db.collection('newsProviders');
-const usersCol = db.collection('users');
+import {newsProvidermodel} from '../models/mnewsProvider.js';
+import {usermodel} from '../models/muser.js';
+// import cloudinary_v2 from '../utils/cloudinary.js';
+
+import { v2 as cloudinary_v2 } from 'cloudinary';
+
 
 const getAllProviders = async (req, res) => {
+
   try {
-    const snapshot = await newsProvidersCol.get();
-    const providers = snapshot.docs.map(doc => ({ ...doc.data(), _id: doc.id }));
+    const providers = await newsProvidermodel.find();
     res.status(202).json({ success: true, providers });
   } catch (error) {
-    console.error('[PROVIDER] Error getting all providers:', error);
-    res.status(210).json({ success: false, message: error.message });
+    res.status(210).json({ success: false, message: error });
   }
 };
 
 const getFollowingProviders = async (req, res) => {
   try {
-    const userDoc = await usersCol.doc(req.user.id).get();
-    if (!userDoc.exists) {
-      return res.status(210).json({ success: false, message: "User not found" });
-    }
 
-    const following = userDoc.data().following || [];
+    const user = await usermodel.findById(req.user.id);
 
-    if (following.length === 0) {
-      return res.status(202).json({ success: true, providers: [] });
-    }
+    const following = user.following;
 
-    const providers = [];
-    for (let i = 0; i < following.length; i += 30) {
-      const batch = following.slice(i, i + 30);
-      const snapshot = await newsProvidersCol.where('baseURL', 'in', batch).get();
-      snapshot.docs.forEach(doc => providers.push({ ...doc.data(), _id: doc.id }));
-    }
+    const followingProvidersDetails = await newsProvidermodel.find({ baseURL: { $in: following } });
 
-    res.status(202).json({ success: true, providers });
-  } catch (error) {
-    console.error('[PROVIDER] Error getting following providers:', error);
-    res.status(210).json({ success: false, message: "Error while getting following providers" });
+    res.status(202).json({ success: true, providers: followingProvidersDetails });
+  }
+  catch (error) {
+    console.log(error);
+    res.status(210).json({ success: false, message: "Error while geting Following Providers" });
   }
 };
 
-export { getAllProviders, getFollowingProviders };
+
+const createChannel = async (req, res) => {
+  const { name, baseURL } = req.body;
+
+  let logoURL = '';
+
+  try {
+    if (req.file) {
+      const cloudinary_res = await cloudinary_v2.uploader.upload(req.file.path, {
+        folder: 'news-aggregator',
+        resource_type: 'auto',
+      });
+      logoURL = cloudinary_res.secure_url;
+    }
+
+
+    const providerExist = await usermodel.findById(req.user.id);
+
+    if (!providerExist) {
+      return res.status(210).json({ success: false, message: 'User not found' });
+    }
+
+    const newChannel = new newsProvidermodel({
+      name,
+      baseURL,
+      logo: logoURL,
+      provider_id: req.user.id,
+    });
+
+    await newChannel.save();
+    res.status(202).json({ success: true, message: 'Channel created successfully', channel: newChannel });
+  } catch (error) {
+    console.error('Error creating channel:', error);
+    res.status(210).json({ success: false, message: 'Error creating channel', error });
+  }
+};
+
+
+const getChannels = async (req, res) => {
+
+  // console.log(req.user);
+
+  try {
+    // console.log(req.user.id);
+
+    const channels = await newsProvidermodel.find({ provider_id: req.user.id });
+
+    console.log(channels);
+
+    res.status(202).json({ success: true, channels });
+  } catch (error) {
+    res.status(210).json({ success: false, message: error });
+  }
+};
+
+const deleteChannel = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const channel = await newsProvidermodel.findById(id);
+
+    if (!channel) {
+      return res.status(210).json({ success: false, message: 'Channel not found' });
+    }
+
+    await newsProvidermodel.findByIdAndDelete(id);
+    res.status(202).json({ success: true, message: 'Channel deleted successfully' });
+
+  } catch (error) {
+    res.status(210).json({ success: false, message: error });
+  }
+}
+
+
+
+// module.exports = { getAllProviders, getFollowingProviders, createChannel, getChannels, deleteChannel };
+
+// export default { getAllProviders, getFollowingProviders, createChannel, getChannels, deleteChannel };
+
+export { getAllProviders, getFollowingProviders, createChannel, getChannels, deleteChannel };

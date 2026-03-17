@@ -1,17 +1,21 @@
-import { db } from '../config/firebase.js';
-import { FieldValue } from 'firebase-admin/firestore';
-import { v4 as uuidv4 } from 'uuid';
+// const bookmark_model = require('../models/mbookmark');
+// const like_model = require('../models/mlike');
+// const usermodel = require('../models/muser');
+// const newsProvidermodel = require('../models/mnewsProvider');
+// const comment_model = require('../models/mcomments');
+// const { v4: uuidv4 } = require('uuid');
 
-const bookmarksCol = db.collection('bookmarks');
-const likesCol = db.collection('likes');
-const usersCol = db.collection('users');
-const newsProvidersCol = db.collection('newsProviders');
-const commentsCol = db.collection('comments');
+import {bookmark_model} from '../models/mbookmark.js';
+import {like_model} from '../models/mlike.js';
+import {usermodel} from '../models/muser.js';
+import {newsProvidermodel} from '../models/mnewsProvider.js';
+import {comment_model} from '../models/mcomments.js';
+import { v4 as uuidv4 } from 'uuid';
 
 
 const getBookmarkArticle = async (req, res) => {
-  const snapshot = await bookmarksCol.where('user_id', '==', req.user.id).get();
-  const bookmarks = snapshot.docs.map(doc => ({ ...doc.data(), _id: doc.id }));
+  const bookmarks = await bookmark_model.find({ user_id: req.user.id });
+
   return res.status(202).json({ success: true, bookmarks });
 }
 
@@ -22,13 +26,9 @@ const isBookmarked = async (req, res) => {
     return res.status(210).json({ success: false, message: "Title and Link is required" });
   }
 
-  const snapshot = await bookmarksCol
-    .where('user_id', '==', req.user.id)
-    .where('title', '==', title)
-    .where('link', '==', link)
-    .limit(1).get();
+  const bookmark = await bookmark_model.findOne({ user_id: req.user.id, title, link });
 
-  if (snapshot.empty) {
+  if (!bookmark) {
     return res.status(202).json({ success: true, bookmarked: false });
   }
 
@@ -36,72 +36,68 @@ const isBookmarked = async (req, res) => {
 }
 
 const addBookmarkArticle = async (req, res) => {
+
   const { title, link, providerImg, providerName, imgURL, someText } = req.body;
 
   if (!title && !link) {
     return res.status(210).json({ success: false, message: "Title and Link are required" });
   }
 
-  await bookmarksCol.add({
-    user_id: req.user.id, title, link, providerImg, providerName, imgURL, someText,
-    createdAt: FieldValue.serverTimestamp(),
-    updatedAt: FieldValue.serverTimestamp(),
+
+  const newBookmark = new bookmark_model({
+    user_id: req.user.id, title, link, providerImg, providerName, imgURL, someText
   });
+
+  await newBookmark.save();
 
   return res.status(202).json({ success: true, message: "Bookmark added successfully" });
 }
 
 const deleteBookmarkArticle = async (req, res) => {
+
   const { title, link } = req.body;
 
   if (!title && !link) {
     return res.status(210).json({ success: false, message: "Title and Link are required" });
   }
 
-  const snapshot = await bookmarksCol
-    .where('user_id', '==', req.user.id)
-    .where('title', '==', title)
-    .where('link', '==', link)
-    .limit(1).get();
-
-  if (!snapshot.empty) {
-    await snapshot.docs[0].ref.delete();
-  }
+  await bookmark_model.findOneAndDelete({ user_id: req.user.id, title, link });
 
   return res.status(202).json({ success: true, message: "Bookmark deleted successfully" });
 }
 
 const addLikeArticle = async (req, res) => {
+
+
+  // console.log(req.body);
+  // return res.status(202).json({ success: true, message: "Like added successfully" });
+
+
   const { title } = req.body;
 
   if (!title) {
     return res.status(210).json({ success: false, message: "Title is required" });
   }
 
-  await likesCol.add({
-    user_id: req.user.id, title,
-    createdAt: FieldValue.serverTimestamp(),
-    updatedAt: FieldValue.serverTimestamp(),
+  const newLike = new like_model({
+    user_id: req.user.id, title
   });
 
+  await newLike.save();
+
   return res.status(202).json({ success: true, message: "Like added successfully" });
+
 }
 
 const deleteLikeArticle = async (req, res) => {
+
   const { title } = req.body;
 
   if (!title) {
     return res.status(210).json({ success: false, message: "Title is required" });
   }
 
-  const snapshot = await likesCol
-    .where('user_id', '==', req.user.id)
-    .where('title', '==', title)
-    .limit(1).get();
-
-  if (!snapshot.empty) {
-    await snapshot.docs[0].ref.delete();
-  }
+  await like_model.findOneAndDelete({ user_id: req.user.id, title });
 
   return res.status(202).json({ success: true, message: "Like deleted successfully" });
 }
@@ -113,12 +109,9 @@ const isLiked = async (req, res) => {
     return res.status(210).json({ success: false, message: "Title is required" });
   }
 
-  const snapshot = await likesCol
-    .where('user_id', '==', req.user.id)
-    .where('title', '==', title)
-    .limit(1).get();
+  const like = await like_model.findOne({ user_id: req.user.id, title });
 
-  if (snapshot.empty) {
+  if (!like) {
     return res.status(202).json({ success: true, liked: false });
   }
 
@@ -126,57 +119,123 @@ const isLiked = async (req, res) => {
 }
 
 const getNumLikes = async (req, res) => {
+
+
   const { title } = req.body;
 
   if (!title) {
     return res.status(210).json({ success: false, message: "title is required" });
   }
 
-  const snapshot = await likesCol.where('title', '==', title).get();
+  const likes = await like_model.find({ title: title });
 
-  return res.status(202).json({ success: true, numLikes: snapshot.size });
+  return res.status(202).json({ success: true, numLikes: likes.length });
+
 }
 
 
+const addFollow = async (req, res) => {
+  const { baseURL } = req.body;
+
+  if (!baseURL) {
+    return res.status(210).json({ success: false, message: "BaseURL is required" });
+  }
+
+  const provider = await newsProvidermodel.findOneAndUpdate({ baseURL }, { $addToSet: { followers: req.user.id } });
+
+  const user = await usermodel.findByIdAndUpdate(req.user.id, { $addToSet: { following: baseURL } });
+
+
+
+
+  if (!provider || !user) {
+    return res.status(210).json({ success: false, message: "error while Follow" });
+  }
+
+  return res.status(202).json({ success: true, message: "Followed successfully" });
+}
+
+const deleteFollow = async (req, res) => {
+
+  const { baseURL } = req.body;
+
+  if (!baseURL) {
+    return res.status(210).json({ success: false, message: "BaseURL is required" });
+  }
+
+  const provider = await newsProvidermodel.findOneAndUpdate({ baseURL }, { $pull: { followers: req.user.id } });
+
+  const user = await usermodel.findByIdAndUpdate(req.user.id, { $pull: { following: baseURL } });
+
+  if (!provider || !user) {
+    return res.status(210).json({ success: false, message: "error while unfollow" });
+  }
+
+  return res.status(202).json({ success: true, message: "Unfollowed successfully" });
+}
+
+const isFollowed = async (req, res) => {
+
+  try {
+    const { baseURL } = req.body;
+
+    if (!baseURL) {
+      return res.status(210).json({ success: false, message: "BaseURL is required" });
+    }
+
+    const user_follow = await usermodel.findById(req.user.id).select('following');
+
+    if (user_follow.following.includes(baseURL)) {
+      return res.status(202).json({ success: true, isFollowing: true });
+    }
+
+    return res.status(202).json({ success: true, isFollowing: false });
+  } catch (error) {
+    console.error('Failed to check follow status:', error);
+    return res.status(210).json({ success: false, message: "Error while checking follow status" });
+  }
+}
+
 const addComment = async (req, res) => {
+
   try {
     const { articleURL, comment } = req.body;
 
+    // Check for required fields
     if (!articleURL || !comment) {
       return res.status(210).json({
         success: false, message: "ArticleURL, Username, and Comment are required"
       });
     }
 
-    const snapshot = await commentsCol.where('articleURL', '==', articleURL).limit(1).get();
+    const existingComment = await comment_model.findOne({ articleURL });
 
-    if (!snapshot.empty) {
-      const docRef = snapshot.docs[0].ref;
-      const existingData = snapshot.docs[0].data();
-      const users = existingData.user || [];
-      users.push({
+    if (existingComment) {
+      existingComment.user.push({
         username: req.user.username,
         comment,
-        commentId: uuidv4(),
-        timestamp: new Date(),
+        commentId: uuidv4()
       });
-      await docRef.update({ user: users });
+      await existingComment.save();
       return res.status(210).json({ success: true, message: "Comment added successfully", username: req.user.username });
-    } else {
-      await commentsCol.add({
+    }
+    else {
+      const newComment = new comment_model({
         articleURL,
         user: [
           {
-            username: req.user.username,
+            username: req.user.username, // Adding username from request body
             comment: comment,
-            commentId: uuidv4(),
-            timestamp: new Date(),
+            commentId: uuidv4()
           }
-        ],
-        createdAt: FieldValue.serverTimestamp(),
-        updatedAt: FieldValue.serverTimestamp(),
+        ]
       });
 
+      // Save the new comment to the database
+      console.log(newComment);
+      await newComment.save();
+
+      // Respond with success
       return res.status(202).json({
         success: true, message: "Comment added successfully",
       });
@@ -189,34 +248,39 @@ const addComment = async (req, res) => {
       message: "Error while adding comment"
     });
   }
+
 }
 
 const deleteComment = async (req, res) => {
+
   try {
     const { articleURL, commentId } = req.body;
 
+    // Check for required fields
     if (!articleURL || !commentId) {
       return res.status(210).json({ success: false, message: "ArticleURL and timestamp are required" });
     }
 
-    const snapshot = await commentsCol.where('articleURL', '==', articleURL).limit(1).get();
 
-    if (snapshot.empty) {
+    const existingComment = await comment_model.findOne({ articleURL });
+
+    if (!existingComment) {
       return res.status(210).json({ success: false, message: "Comment not found" });
     }
 
-    const docRef = snapshot.docs[0].ref;
-    const existingData = snapshot.docs[0].data();
-    const filteredUsers = (existingData.user || []).filter((u) => u.commentId !== commentId);
+    existingComment.user = existingComment.user.filter((user) => user.commentId !== commentId);
 
-    await docRef.update({ user: filteredUsers });
+
+    await existingComment.save();
 
     return res.status(202).json({ success: true, message: "Comment deleted successfully" });
 
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Failed to delete comment:', error);
     return res.status(210).json({ success: false, message: "Error while deleting comment" });
   }
+
 }
 
 const getCommentsOfArticles = async (req, res) => {
@@ -227,17 +291,17 @@ const getCommentsOfArticles = async (req, res) => {
       return res.status(210).json({ success: false, message: "ArticleURL is required" });
     }
 
-    const snapshot = await commentsCol.where('articleURL', '==', articleURL).limit(1).get();
+    const comments = await comment_model.findOne({ articleURL });
 
-    if (snapshot.empty) {
+    if (!comments) {
       return res.status(210).json({ success: true, comments: [] });
     }
 
-    const comments = snapshot.docs[0].data();
+    return res.status(202).json({ success: true, comments: comments.user, loggedUserName: req.user.username });
 
-    return res.status(202).json({ success: true, comments: comments.user || [], loggedUserName: req.user.username });
 
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Failed to get comments:', error);
     return res.status(210).json({ success: false, message: "Error while getting comments" });
   }
@@ -251,86 +315,25 @@ const getNumComments = async (req, res) => {
       return res.status(210).json({ success: false, message: "ArticleURL is required" });
     }
 
-    const snapshot = await commentsCol.where('articleURL', '==', articleURL).limit(1).get();
+    const comments = await comment_model.findOne({ articleURL });
 
-    if (snapshot.empty) {
+    if (!comments) {
       return res.status(202).json({ success: true, numComments: 0 });
     }
 
-    const comments = snapshot.docs[0].data();
+    return res.status(202).json({ success: true, numComments: comments.user.length });
 
-    return res.status(202).json({ success: true, numComments: (comments.user || []).length });
-
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Failed to get comments:', error);
     return res.status(210).json({ success: false, message: "Error while getting comments" });
   }
 }
 
-const addFollow = async (req, res) => {
-  const { baseURL } = req.body;
-  if (!baseURL) {
-    return res.status(210).json({ success: false, message: "BaseURL is required" });
-  }
 
-  const providerSnap = await newsProvidersCol.where('baseURL', '==', baseURL).limit(1).get();
-  if (providerSnap.empty) {
-    return res.status(210).json({ success: false, message: "Provider not found" });
-  }
-
-  const userRef = usersCol.doc(req.user.id);
-  const userDoc = await userRef.get();
-  if (!userDoc.exists) {
-    return res.status(210).json({ success: false, message: "User not found" });
-  }
-
-  await providerSnap.docs[0].ref.update({ followers: FieldValue.arrayUnion(req.user.id) });
-  await userRef.update({ following: FieldValue.arrayUnion(baseURL) });
-
-  return res.status(202).json({ success: true, message: "Followed successfully" });
-}
-
-const deleteFollow = async (req, res) => {
-  const { baseURL } = req.body;
-  if (!baseURL) {
-    return res.status(210).json({ success: false, message: "BaseURL is required" });
-  }
-
-  const providerSnap = await newsProvidersCol.where('baseURL', '==', baseURL).limit(1).get();
-  if (providerSnap.empty) {
-    return res.status(210).json({ success: false, message: "Provider not found" });
-  }
-
-  const userRef = usersCol.doc(req.user.id);
-  const userDoc = await userRef.get();
-  if (!userDoc.exists) {
-    return res.status(210).json({ success: false, message: "User not found" });
-  }
-
-  await providerSnap.docs[0].ref.update({ followers: FieldValue.arrayRemove(req.user.id) });
-  await userRef.update({ following: FieldValue.arrayRemove(baseURL) });
-
-  return res.status(202).json({ success: true, message: "Unfollowed successfully" });
-}
-
-const isFollowed = async (req, res) => {
-  try {
-    const { baseURL } = req.body;
-    if (!baseURL) {
-      return res.status(210).json({ success: false, message: "BaseURL is required" });
-    }
-
-    const userDoc = await usersCol.doc(req.user.id).get();
-    if (!userDoc.exists) {
-      return res.status(202).json({ success: true, isFollowing: false });
-    }
-
-    const following = userDoc.data().following || [];
-    return res.status(202).json({ success: true, isFollowing: following.includes(baseURL) });
-  } catch (error) {
-    console.error('Failed to check follow status:', error);
-    return res.status(210).json({ success: false, message: "Error while checking follow status" });
-  }
-}
+// module.exports = { addBookmarkArticle, deleteBookmarkArticle, getBookmarkArticle, isBookmarked, addLikeArticle, deleteLikeArticle, isLiked, addFollow, deleteFollow, isFollowed, addComment, deleteComment, getCommentsOfArticles, getNumLikes, getNumComments };
 
 export { addBookmarkArticle, deleteBookmarkArticle, getBookmarkArticle, isBookmarked, addLikeArticle, deleteLikeArticle, isLiked, addFollow, deleteFollow, isFollowed, addComment, deleteComment, getCommentsOfArticles, getNumLikes, getNumComments };
+
+
+

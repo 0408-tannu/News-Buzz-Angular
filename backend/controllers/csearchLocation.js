@@ -1,8 +1,11 @@
-import { db } from '../config/firebase.js';
+// const searchLocation_model = require("../models/msearchLocation.js");
 
-const searchLocationsCol = db.collection('searchLocations');
+import {searchLocation_model} from "../models/msearchLocation.js";
+
 
 const addSearchLocation = async (req, res, Text) => {
+
+  
   let searchText = Text;
   console.log(searchText);
   searchText = searchText.toLowerCase();
@@ -12,31 +15,32 @@ const addSearchLocation = async (req, res, Text) => {
     return res.status(210).json({ success: false, message: "Search Text is required" });
   }
 
-  const snapshot = await searchLocationsCol.where('user_id', '==', user_id).limit(1).get();
+  const searchLocation = await searchLocation_model.findOne({ user_id });
 
-  if (snapshot.empty) {
-    await searchLocationsCol.add({
-      user_id,
-      searchText: [{ text: searchText, count: 1, updatedAt: new Date().toISOString() }],
+  if (!searchLocation) {
+    const newSearchLocation = new searchLocation_model({
+      user_id, searchText: [{ text: searchText }]
     });
+
+    await newSearchLocation.save();
     return;
   }
 
-  const docRef = snapshot.docs[0].ref;
-  const data = snapshot.docs[0].data();
-  const searchTextArray = data.searchText || [];
+  const search = searchLocation.searchText.find((search) => search.text === searchText);
+  //   The object returned by find() is a reference to the element inside the searchText array, not a separate copy.
+  // Modifying search.count directly updates the original array element within searchLocation.
 
-  const existingIndex = searchTextArray.findIndex((s) => s.text === searchText);
-
-  if (existingIndex >= 0) {
-    searchTextArray[existingIndex].count += 1;
-    searchTextArray[existingIndex].updatedAt = new Date().toISOString();
+  if (search) {
+    search.count += 1;
+    search.date = Date.now();
   } else {
-    searchTextArray.push({ text: searchText, count: 1, updatedAt: new Date().toISOString() });
+    searchLocation.searchText.push({ text: searchText });
   }
 
-  await docRef.update({ searchText: searchTextArray });
+  await searchLocation.save();
   return;
+
+
 }
 
-export { addSearchLocation };
+export {addSearchLocation};

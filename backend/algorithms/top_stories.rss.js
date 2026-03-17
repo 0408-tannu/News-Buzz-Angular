@@ -2,10 +2,8 @@
 // Uses free Google News RSS feeds for reliable, fast news fetching
 
 import Parser from "rss-parser";
-import { db } from "../config/firebase.js";
+import { top_stories_model } from "../models/mtopStories.js";
 import { batchSaveProviders } from "../utils/providerCache.js";
-
-const topStoriesCol = db.collection('topStories');
 
 const parser = new Parser({
   customFields: {
@@ -133,19 +131,14 @@ const Scrap = async (searchby) => {
 const ScrapTop_stories = async (req, res) => {
   const FETCH_INTERVAL = 1000 * 60 * 20; // 20 minutes
 
-  let lastFetchTime = 0;
-  const lastDocSnap = await topStoriesCol.orderBy('createdAt', 'desc').limit(1).get();
-  if (!lastDocSnap.empty) {
-    const createdAt = lastDocSnap.docs[0].data().createdAt;
-    if (createdAt) {
-      lastFetchTime = createdAt.toMillis ? createdAt.toMillis() : new Date(createdAt).getTime();
-    }
-  }
+  let lastFetchTime = null;
+  lastFetchTime = await top_stories_model.findOne({}, { createdAt: 1 });
+  if (!lastFetchTime) lastFetchTime = 0;
+  else lastFetchTime = lastFetchTime.createdAt.getTime();
 
   const currentTime = new Date().getTime();
 
-  const countSnap = await topStoriesCol.get();
-  const Documentcount = countSnap.size;
+  const Documentcount = await top_stories_model.find({}).countDocuments();
 
   if (currentTime - lastFetchTime > FETCH_INTERVAL || Documentcount < 30) {
     console.log("Fetching new top stories via RSS...");
@@ -156,9 +149,8 @@ const ScrapTop_stories = async (req, res) => {
     // If RSS feed returned no articles, try to return cached data
     if (!articles || articles.length === 0) {
       console.log("RSS returned no articles, checking cache...");
-      const cachedSnap = await topStoriesCol.get();
-      if (cachedSnap.size > 0) {
-        const cached = cachedSnap.docs.map(doc => ({ ...doc.data(), _id: doc.id }));
+      const cached = await top_stories_model.find();
+      if (cached && cached.length > 0) {
         return res
           .status(202)
           .json({ success: true, articles: cached, source: "cache" });
@@ -171,10 +163,7 @@ const ScrapTop_stories = async (req, res) => {
     }
 
     try {
-      const existingSnap = await topStoriesCol.get();
-      const batch = db.batch();
-      existingSnap.docs.forEach(doc => batch.delete(doc.ref));
-      await batch.commit();
+      await top_stories_model.deleteMany({});
     } catch (err) {
       return res.status(210).json({
         success: false,
@@ -189,14 +178,13 @@ const ScrapTop_stories = async (req, res) => {
       // Save articles sequentially
       for (const article of articles) {
         if (article) {
-          await topStoriesCol.add({
+          const newArticle = new top_stories_model({
             title: article.title,
             link: article.link,
             time: article.time,
             providerImg: article.providerImg || "",
-            createdAt: new Date(),
-            updatedAt: new Date(),
           });
+          await newArticle.save();
         }
       }
 
@@ -215,8 +203,7 @@ const ScrapTop_stories = async (req, res) => {
     }
   } else {
     try {
-      const snapshot = await topStoriesCol.get();
-      const top_stories = snapshot.docs.map(doc => ({ ...doc.data(), _id: doc.id }));
+      const top_stories = await top_stories_model.find();
       res.status(202).json({ success: true, articles: top_stories });
     } catch (error) {
       res.status(210).json({ success: false, message: error });

@@ -4,9 +4,7 @@
 import Parser from "rss-parser";
 import { addSearchLocation } from "../controllers/csearchLocation.js";
 import { batchSaveProviders, getProviderBaseURL } from "../utils/providerCache.js";
-import { db } from "../config/firebase.js";
-
-const mutesCol = db.collection('mutes');
+import mute_model from "../models/mmute.js";
 
 const parser = new Parser({
   customFields: {
@@ -218,15 +216,15 @@ const scrapSearch = async (req, res) => {
   // Get muted sites
   let mutedSiteString = "";
   try {
-    const snapshot = await mutesCol.where('user', '==', req.user.id).limit(1).get();
+    let mutedSitesObject = await mute_model
+      .findOne({ user: req.user.id })
+      .select("mutedURL -_id");
 
-    if (!snapshot.empty) {
-      const mutedSitesArray = snapshot.docs[0].data().mutedURL;
-      if (mutedSitesArray) {
-        mutedSiteString = mutedSitesArray
-          .map((url) => `-site:${url}`)
-          .join(" ");
-      }
+    let mutedSitesArray = mutedSitesObject?.mutedURL;
+    if (mutedSitesArray) {
+      mutedSiteString = mutedSitesArray
+        .map((url) => `-site:${url}`)
+        .join(" ");
     }
   } catch (err) {
     console.log("No muted sites found or error:", err.message);
