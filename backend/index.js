@@ -1,12 +1,6 @@
-
-// const express = require('express');
-// const serverless = require('serverless-http');
 import express from 'express';
-// import serverless from 'serverless-http';
 const app = express();
 
-
-import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import {checkAuth} from './middleware/checkAuth.js';
@@ -21,8 +15,7 @@ import {router as changepasswordroute }from './routes/rchangepassword.js';
 import {router as providerroute} from './routes/rprovider.js';
 import { router as history_router } from './routes/rhistory.js';
 import { router as mute_router } from './routes/rmute.js';
-import { loadProviderCache, refreshAllProviderLogos } from './utils/providerCache.js';
-
+import './config/firebase.js';
 
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -37,15 +30,6 @@ const __dirname = path.dirname(__filename);
 const port = process.env.PORT || 9000;
 
 app.use(express.static(path.join(__dirname, './frontend/build')));
-// Serve static files from the React app
-
-mongoose.connect(process.env.MONGO_URL).then(() => {
-  console.log("connected to mongodb");
-  // Load provider cache into memory on startup
-  loadProviderCache();
-}).catch((err) => {
-  console.log(`${err} \n error connecting mongoDB `);
-});
 
 
 app.use(express.json());
@@ -69,7 +53,7 @@ app.use("/api/myfeed", checkAuth, feedroute);
 app.use("/api/quicksearch", checkAuth, quicksearchroute);
 app.use("/api/sendemail", sendemailroute);
 app.use("/api/changepassword", checkAuth, changepasswordroute);
-app.use("/api/provider", checkAuth, providerroute);
+app.use("/api/provider", providerroute);
 app.use("/api/mute", checkAuth, mute_router);
 app.use("/api/history", checkAuth, history_router);
 
@@ -78,19 +62,8 @@ app.get('/',(req,res)=> {res.json({message:"Hello Backend 2ND time"})});
 app.get('/api/get',(req,res)=> {res.json({message:"Hello Backend 2ND time"})});
 app.get('/api',(req,res)=> {res.json({message:"Hello Backend 2ND time"})});
 app.get('/api/test', (req, res) => {
-  res.json({ message: 'Hello from Serverless!' }); // Proper JSON response
+  res.json({ message: 'Hello from Serverless!' });
 });
-
-// One-time endpoint to refresh all existing provider logos to Google Favicon 128px
-app.get('/api/refresh-provider-logos', async (req, res) => {
-  try {
-    const count = await refreshAllProviderLogos();
-    res.json({ success: true, message: `Updated ${count} provider logos to Google Favicon 128px` });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-});
-
 
 
 // Global error handler to prevent unhandled errors from crashing the server

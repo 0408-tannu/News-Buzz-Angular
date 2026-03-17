@@ -1,75 +1,69 @@
-// const history_model = require("../models/mhistory");
-import {history_model} from "../models/mhistory.js";
+import { db } from '../config/firebase.js';
+
+const historyCol = db.collection('history');
 
 const gethistory = async (req, res, next) => {
+  const user_id = req.user.id;
+  const snapshot = await historyCol.where('userid', '==', user_id).limit(1).get();
 
-    const user_id = req.user.id;
-    let userHistory = await history_model.findOne({ userid: user_id });
-
-    if (userHistory) {
-        res.status(202).json({ success: true, data: userHistory.historyData });
-    } else {
-        res.status(210).json({ success: false, message: "No History Found" });
-    }
+  if (!snapshot.empty) {
+    const data = snapshot.docs[0].data();
+    res.status(202).json({ success: true, data: data.historyData });
+  } else {
+    res.status(210).json({ success: false, message: "No History Found" });
+  }
 }
 
 const removehistory = async (req, res, next) => {
-    const user_id = req.user.id;
+  const user_id = req.user.id;
+  const { baseURL } = req.body;
 
-    const { baseURL } = req.body;
+  const snapshot = await historyCol.where('userid', '==', user_id).limit(1).get();
 
-    let userHistory = await history_model.findOne({ userid: user_id });
-
-    if (userHistory) {
-        let newHistory = userHistory.historyData.filter((data) => data.link !== baseURL);
-        userHistory.historyData = newHistory;
-        await userHistory.save();
-        res.status(202).json({ success: true, message: "Article Removed from History" });
-    }
-    else {
-        res.status(210).json({ success: false, message: "History of Article not Found" });
-    }
+  if (!snapshot.empty) {
+    const docRef = snapshot.docs[0].ref;
+    const data = snapshot.docs[0].data();
+    const newHistory = data.historyData.filter((item) => item.link !== baseURL);
+    await docRef.update({ historyData: newHistory });
+    res.status(202).json({ success: true, message: "Article Removed from History" });
+  } else {
+    res.status(210).json({ success: false, message: "History of Article not Found" });
+  }
 }
-
-
 
 const addhistory = async (req, res, next) => {
+  const user_id = req.user.id;
+  const { title, link } = req.body;
 
-    const user_id = req.user.id;
+  const snapshot = await historyCol.where('userid', '==', user_id).limit(1).get();
 
-    const { title, link } = req.body;
-
-    let userHistory = await history_model.findOne({ userid: user_id });
-
-    if (userHistory) {
-
-        let newHistory = { title: title, link: link, time: new Date() }
-
-        userHistory.historyData.unshift(newHistory);
-        await userHistory.save();
-        res.status(202).json({ success: true, message: "Article Added to History" });
-    }
-    else {
-        let newHistory = new history_model({ userid: user_id, historyData: [{ title: title, link: link, time: new Date() }] });
-        await newHistory.save();
-        res.status(202).json({ success: true, message: "Article Added to History" });
-    }
+  if (!snapshot.empty) {
+    const docRef = snapshot.docs[0].ref;
+    const data = snapshot.docs[0].data();
+    const historyData = data.historyData || [];
+    historyData.unshift({ title, link, time: new Date().toISOString() });
+    await docRef.update({ historyData });
+    res.status(202).json({ success: true, message: "Article Added to History" });
+  } else {
+    await historyCol.add({
+      userid: user_id,
+      historyData: [{ title, link, time: new Date().toISOString() }]
+    });
+    res.status(202).json({ success: true, message: "Article Added to History" });
+  }
 }
 
-
 const removeallhistory = async (req, res, next) => {
-    const user_id = req.user.id;
+  const user_id = req.user.id;
 
-    let userHistory = await history_model.findOne({ userid: user_id });
+  const snapshot = await historyCol.where('userid', '==', user_id).limit(1).get();
 
-    if (userHistory) {
-        userHistory.historyData = [];
-        await userHistory.save();
-        res.status(202).json({ success: true, message: "All History Articles Deleted" });
-    }
-    else {
-        res.status(210).json({ success: false, message: "No History Found" });
-    }
+  if (!snapshot.empty) {
+    await snapshot.docs[0].ref.update({ historyData: [] });
+    res.status(202).json({ success: true, message: "All History Articles Deleted" });
+  } else {
+    res.status(210).json({ success: false, message: "No History Found" });
+  }
 }
 
 export { gethistory, addhistory, removehistory, removeallhistory };

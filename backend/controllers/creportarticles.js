@@ -1,35 +1,20 @@
-// const reportarticlesModel = require('../models/reportarticles');
-// const newsProvidermodel = require('../models/newsProvider');
+import { db } from '../config/firebase.js';
 
-import {reportarticlesModel} from '../models/mreportarticles.js';
-import {newsProvidermodel} from '../models/mnewsProvider.js';
-
+const reportArticlesCol = db.collection('reportArticles');
+const newsProvidersCol = db.collection('newsProviders');
 
 const AddreportArticles = async (req, res) => {
-
   try {
     const { title, link, num } = req.body;
 
-    const existingreportarticles = await reportarticlesModel.findOne({ link });
+    const snapshot = await reportArticlesCol.where('link', '==', link).limit(1).get();
 
-    if (existingreportarticles) {
-
-      const updatedreportarticles = await reportarticlesModel.findOneAndUpdate({ link }, { num: num + 1 });
-
-      if (updatedreportarticles)
-        return res.status(202).json({ success: true, message: "Article Reported Successfully" });
-      else
-        return res.status(210).json({ success: false, message: "Article Report Failed" });
-    }
-    else {
-      const newreportarticles = new reportarticlesModel({ title, link, num });
-
-      await newreportarticles.save();
-
-      if (newreportarticles)
-        return res.status(202).json({ success: true, message: "Article Reported Successfully" });
-      else
-        return res.status(210).json({ success: false, message: "Article Report Failed" });
+    if (!snapshot.empty) {
+      await snapshot.docs[0].ref.update({ num: num + 1 });
+      return res.status(202).json({ success: true, message: "Article Reported Successfully" });
+    } else {
+      await reportArticlesCol.add({ title, link, num: num || 1, feedback: [] });
+      return res.status(202).json({ success: true, message: "Article Reported Successfully" });
     }
   } catch (error) {
     res.status(210).json({ error: error.message });
@@ -38,15 +23,19 @@ const AddreportArticles = async (req, res) => {
 
 const GetreportArticles = async (req, res) => {
   try {
-    // Fetch the baseURL from the provider model
-    const provider = await newsProvidermodel.findOne({ provider_id: req.user._id });
+    const providerSnap = await newsProvidersCol.where('provider_id', '==', req.user.id).limit(1).get();
 
-    if (!provider) {
+    if (providerSnap.empty) {
       return res.status(210).json({ success: false, message: "Error finding Provider" });
     }
-    const BaseURL = provider.baseURL;
-    // Use regex to find links that start with the BaseURL
-    const reportarticles = await reportarticlesModel.find({ link: { $regex: `^${BaseURL}` } });
+
+    const BaseURL = providerSnap.docs[0].data().baseURL;
+
+    // Firestore doesn't support regex, so we fetch all and filter client-side
+    const allReports = await reportArticlesCol.get();
+    const reportarticles = allReports.docs
+      .map(doc => ({ ...doc.data(), _id: doc.id }))
+      .filter(report => report.link && report.link.startsWith(BaseURL));
 
     return res.status(202).json({ success: true, reportarticles });
   } catch (error) {
@@ -55,5 +44,4 @@ const GetreportArticles = async (req, res) => {
   }
 };
 
-
-module.exports = { AddreportArticles, GetreportArticles };
+export { AddreportArticles, GetreportArticles };

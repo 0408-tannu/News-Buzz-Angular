@@ -1,0 +1,236 @@
+$primary: #1E90FF;
+$icon-size: 28px;
+$font: 'Quicksand', sans-serif;
+
+// Hamburger toggle
+.menu-toggle-btn {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1300;
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.04);
+  color: $primary;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(8px);
+
+  &:hover {
+    background: rgba(30, 144, 255, 0.08);
+    border-color: $primary;
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &.dark {
+    background: rgba(255, 255, 255, 0.08);
+    color: #90CAF9;
+    border-color: rgba(255, 255, 255, 0.1);
+
+    &:hover {
+      background: rgba(30, 144, 255, 0.15);
+      border-color: $primary;
+    }
+  }
+
+  mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+}
+
+// Sidebar drawer
+.sidebar-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 1200;
+  box-sizing: border-box;
+  background: #ffffff;
+  color: #000;
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  transition: width 0.3s ease;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+
+  &.open {
+    width: 220px;
+  }
+
+  &.collapsed {
+    width: 64px;
+  }
+
+  &.dark {
+    background: #1a1a1a;
+    color: #fff;
+    border-right-color: rgba(255, 255, 255, 0.06);
+  }
+
+  // Hide scrollbar
+  &::-webkit-scrollbar { width: 0; }
+}
+
+.toolbar-spacer {
+  min-height: 72px;
+}
+
+.nav-list {
+  flex: 1;
+  padding: 8px 8px;
+
+  .collapsed & {
+    padding: 8px 4px;
+  }
+}
+
+// Nav items
+.nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px 16px;
+  margin-bottom: 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  font-family: $font;
+  position: relative;
+
+  &.collapsed {
+    justify-content: center;
+    padding: 10px 0;
+  }
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+
+  &.dark:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  &.active {
+    background: rgba(30, 144, 255, 0.1);
+    border-right: 3px solid $primary;
+
+    &:hover {
+      background: rgba(30, 144, 255, 0.15);
+    }
+
+    &.dark {
+      background: rgba(30, 144, 255, 0.15);
+
+      &:hover {
+        background: rgba(30, 144, 255, 0.2);
+      }
+    }
+  }
+}
+
+.nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  width: $icon-size + 8px;
+  margin-right: 16px;
+  transition: all 0.2s ease;
+
+  &.collapsed {
+    margin-right: 0;
+  }
+
+  mat-icon {
+    font-size: $icon-size;
+    width: $icon-size;
+    height: $icon-size;
+    color: #000;
+    font-weight: 700;
+    transition: color 0.2s ease;
+  }
+
+  .dark & mat-icon {
+    color: #fff;
+  }
+}
+
+.nav-label {
+  font-family: $font;
+  font-weight: 700;
+  font-size: 1.05rem;
+  white-space: nowrap;
+  color: #000;
+  letter-spacing: 0;
+  transition: color 0.2s ease;
+
+  .dark & {
+    color: #fff;
+  }
+}
+
+// Bottom section
+.bottom-section {
+  padding: 0 8px 16px;
+
+  &.collapsed {
+    padding: 0 4px 16px;
+  }
+}
+
+.divider-line {
+  height: 1px;
+  background: #ddd;
+  margin: 8px 8px 8px;
+
+  &.dark {
+    background: #444;
+  }
+}
+
+// Logout
+.logout-item {
+  &:hover {
+    background-color: rgba(211, 47, 47, 0.06) !important;
+  }
+
+  &.dark:hover {
+    background-color: rgba(255, 107, 107, 0.1) !important;
+  }
+}
+
+.logout-icon {
+  mat-icon {
+    color: #d32f2f !important;
+  }
+
+  &.dark mat-icon {
+    color: #ff6b6b !important;
+  }
+}
+
+.logout-label {
+  font-family: $font;
+  font-weight: 700;
+  font-size: 1.05rem;
+  white-space: nowrap;
+  color: #d32f2f;
+
+  &.dark {
+    color: #ff6b6b;
+  }
+}

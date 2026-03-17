@@ -1,0 +1,51 @@
+<div
+  class="provider-card"
+  [class.dark]="theme.isDark()"
+  [class.shrinking]="isShrinking"
+>
+  <!-- 3-dot Menu Button -->
+  <button class="menu-btn" [class.dark]="theme.isDark()" (click)="toggleMenu($event)">
+    <mat-icon>more_horiz</mat-icon>
+  </button>
+
+  <!-- Dropdown Menu -->
+  @if (menuOpen) {
+    <div class="menu-backdrop" (click)="onOverlayClick()"></div>
+    <div class="dropdown-menu" [class.dark]="theme.isDark()">
+      <button class="menu-item" (click)="seeArticles()">
+        <mat-icon>article</mat-icon>
+        <span>See Articles</span>
+      </button>
+      <button class="menu-item" (click)="visitWebsite()">
+        <mat-icon>open_in_new</mat-icon>
+        <span>Visit Website</span>
+      </button>
+      <button class="menu-item" [class.muted]="isMuted" (click)="toggleMute()">
+        <mat-icon>{{ isMuted ? 'volume_off' : 'volume_up' }}</mat-icon>
+        <span>{{ isMuted ? 'Unmute' : 'Mute' }}</span>
+      </button>
+    </div>
+  }
+
+  <!-- Logo -->
+  <div class="logo-container" [class.dark]="theme.isDark()">
+    @if (logoUrl) {
+      <img [src]="logoUrl" [alt]="name + ' logo'" class="logo-img" (error)="logoUrl = ''" />
+    } @else {
+      <span class="no-logo" [class.dark]="theme.isDark()">No Logo</span>
+    }
+  </div>
+
+  <!-- Provider Name -->
+  <p class="provider-name" [class.dark]="theme.isDark()">{{ name }}</p>
+
+  <!-- Follow Button -->
+  <button
+    class="follow-btn"
+    [class.following]="isFollowing"
+    [class.dark]="theme.isDark()"
+    (click)="toggleFollow()"
+  >
+    {{ isFollowing ? 'Following' : 'Follow' }}
+  </button>
+</div>

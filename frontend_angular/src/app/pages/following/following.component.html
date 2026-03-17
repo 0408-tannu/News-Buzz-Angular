@@ -1,0 +1,84 @@
+<div class="following-page" [class.dark]="theme.isDark()">
+  <div class="page-header">
+    <h1><mat-icon>person_add</mat-icon> News Sources</h1>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs" [class.dark]="theme.isDark()">
+    <button
+      class="tab-btn"
+      [class.active]="activeTab === 'following'"
+      [class.dark]="theme.isDark()"
+      (click)="switchTab('following')"
+    >Following</button>
+    <button
+      class="tab-btn"
+      [class.active]="activeTab === 'all'"
+      [class.dark]="theme.isDark()"
+      (click)="switchTab('all')"
+    >All Sources</button>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-wrapper">
+    <div class="search-bar" [class.dark]="theme.isDark()">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        type="text"
+        placeholder="Search from given articles..."
+        [(ngModel)]="searchQuery"
+        class="search-input"
+        [class.dark]="theme.isDark()"
+      />
+    </div>
+  </div>
+
+  <!-- Loading Skeletons -->
+  <div *ngIf="isLoading" class="providers-grid">
+    <div *ngFor="let s of [1,2,3,4,5,6]" class="skeleton-card" [class.dark]="theme.isDark()">
+      <div class="skeleton skeleton-logo"></div>
+      <div class="skeleton skeleton-name"></div>
+      <div class="skeleton skeleton-url"></div>
+    </div>
+  </div>
+
+  <!-- Providers Grid -->
+  <div *ngIf="!isLoading && displayedProviders.length > 0" class="providers-grid">
+    <div
+      *ngFor="let provider of displayedProviders"
+      class="provider-card"
+      [class.dark]="theme.isDark()"
+    >
+      <div class="provider-info">
+        <img
+          *ngIf="provider.logo"
+          [src]="provider.logo"
+          [alt]="provider.name"
+          class="provider-logo"
+          (error)="$any($event.target).style.display = 'none'"
+        />
+        <div class="provider-details">
+          <span class="provider-name">{{ provider.name }}</span>
+          <span class="provider-url">{{ provider.baseURL }}</span>
+        </div>
+      </div>
+      <button
+        mat-stroked-button
+        [color]="provider.isFollowed ? 'warn' : 'primary'"
+        class="follow-btn"
+        (click)="toggleFollow(provider, $event)"
+      >
+        {{ provider.isFollowed ? 'Unfollow' : 'Follow' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && displayedProviders.length === 0" class="empty-state">
+    <mat-icon class="empty-icon">{{ activeTab === 'following' ? 'person_add' : 'source' }}</mat-icon>
+    <p>{{ activeTab === 'following' ? 'Not following any sources yet' : 'No sources found' }}</p>
+    <button *ngIf="activeTab === 'following'" mat-raised-button color="primary" (click)="switchTab('all')">
+      Browse All Sources
+    </button>
+  </div>
+</div>

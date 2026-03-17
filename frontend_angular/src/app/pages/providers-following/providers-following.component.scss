@@ -1,0 +1,140 @@
+$font: 'Quicksand', sans-serif;
+
+.providers-page {
+  font-family: $font;
+  padding: 12px 20px;
+}
+
+.page-header {
+  margin-bottom: 20px;
+  padding-top: 4px;
+}
+
+.page-title {
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: #1a1a2e;
+  margin: 0 0 4px;
+
+  &.dark {
+    color: #fff;
+  }
+}
+
+.page-subtitle {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.45);
+  margin: 0;
+
+  &.dark {
+    color: rgba(255, 255, 255, 0.5);
+  }
+}
+
+.providers-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Skeleton cards
+.skeleton-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 20px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: #fff;
+
+  &.dark {
+    background: rgb(40, 40, 40);
+    border-color: rgba(255, 255, 255, 0.06);
+
+    .skeleton {
+      background: rgba(255, 255, 255, 0.08);
+    }
+  }
+}
+
+.skeleton {
+  background: #e8e8e8;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+.skeleton-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 16px;
+  margin-bottom: 12px;
+}
+
+.skeleton-name {
+  width: 100px;
+  height: 16px;
+  margin-bottom: 12px;
+}
+
+.skeleton-btn {
+  width: 100%;
+  height: 36px;
+  border-radius: 50px;
+}
+
+@keyframes shimmer {
+  to { left: 100%; }
+}
+
+// Empty state
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  color: #999;
+
+  &.dark {
+    color: #666;
+  }
+
+  .empty-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    opacity: 0.4;
+  }
+
+  p {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+}

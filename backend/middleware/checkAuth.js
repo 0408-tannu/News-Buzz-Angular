@@ -1,17 +1,10 @@
-// const jwt = require('jsonwebtoken');
-// const dotenv = require('dotenv');
-// import usermodel from '../models/muser';
-// const usermodel = require('../models/muser');
-
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-// import usermodel from '../models/muser.js';
 
 dotenv.config();
 
 
 const checkAuth =  (req, res, next) => {
-
 
   const authHeader = req.headers['authorization'];
 
@@ -30,22 +23,14 @@ const checkAuth =  (req, res, next) => {
       return res.status(210).json({ success: false, message: 'Invalid or expired token', caught: true });
     }
 
+    if (!user.id) {
+      return res.status(210).json({ success: false, message: 'Invalid user ID in token. Please log out and log in again.', caught: true });
+    }
 
     req.user = user; // Store the user info for use in other routes
-
-    // const userExist = await usermodel.findById(user.id).select("-password");
-
-    // return res.status(210).json({ success: false, message: "User not foundldsjflajsd" });
-    
-    // if (!userExist) {
-      // return res.status(210).json({ success: false, message: "User not found" });
-    // }
     next();
   });
 
 };
-
-
-// module.exports = checkAuth;
 
 export { checkAuth };
