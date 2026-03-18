@@ -1,0 +1,54 @@
+<div class="history-page" [class.dark]="theme.isDark()">
+  <div class="page-header">
+    <h1><mat-icon>history</mat-icon> Browsing History</h1>
+    <button
+      *ngIf="historyItems.length > 0"
+      mat-stroked-button
+      color="warn"
+      (click)="clearAll()"
+    >
+      <mat-icon>delete_sweep</mat-icon>
+      Clear All
+    </button>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-wrapper">
+    <div class="search-bar" [class.dark]="theme.isDark()">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        type="text"
+        placeholder="Search from given articles..."
+        [(ngModel)]="searchQuery"
+        class="search-input"
+        [class.dark]="theme.isDark()"
+      />
+    </div>
+  </div>
+
+  <!-- Loading Skeletons -->
+  <div *ngIf="isLoading" class="history-grid">
+    <div *ngFor="let s of [1,2,3,4,5,6]" class="skeleton-card">
+      <div class="skeleton-line"></div>
+      <div class="skeleton-line medium"></div>
+      <div class="skeleton-line short"></div>
+    </div>
+  </div>
+
+  <!-- History Grid -->
+  <div *ngIf="!isLoading && filteredHistory.length > 0" class="history-grid">
+    <app-history-card
+      *ngFor="let item of filteredHistory"
+      [title]="item.title"
+      [link]="item.link"
+      [time]="item.time || ''"
+      (removed)="onItemRemoved($event)"
+    ></app-history-card>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && filteredHistory.length === 0" class="empty-state">
+    <mat-icon class="empty-icon">history</mat-icon>
+    <p>No browsing history yet</p>
+  </div>
+</div>

@@ -1,0 +1,81 @@
+<div
+  class="bookmark-card"
+  [class.dark]="theme.isDark()"
+  [class.removing]="isRemoving"
+  (mouseenter)="hovered = true"
+  (mouseleave)="hovered = false"
+>
+  <!-- Provider info -->
+  <div class="card-content">
+    <div class="text-content">
+      <div class="provider-row">
+        @if (providerImg) {
+          <img
+            [src]="providerImg"
+            [alt]="providerName"
+            class="provider-img"
+            (error)="providerImg = ''"
+          />
+        }
+        @if (providerName) {
+          <span class="provider-name" [class.dark]="theme.isDark()">{{ providerName }}</span>
+        }
+      </div>
+
+      <!-- Title -->
+      <h3 class="article-title" [class.dark]="theme.isDark()" (click)="openLink()" matTooltip="Read article">
+        {{ title }}
+      </h3>
+    </div>
+
+    <!-- Article Image -->
+    @if (imgURL) {
+      <img
+        [src]="imgURL"
+        [alt]="title"
+        class="article-img"
+        (error)="imgURL = ''"
+      />
+    }
+  </div>
+
+  <!-- Action buttons (appear on hover) -->
+  <div class="action-row" [class.visible]="hovered">
+    <!-- Remove bookmark -->
+    <button
+      class="action-btn bookmark-btn"
+      (click)="deleteBookmark($event)"
+      matTooltip="Remove bookmark"
+    >
+      <mat-icon>bookmark</mat-icon>
+    </button>
+
+    <!-- Like -->
+    <button
+      class="action-btn like-btn"
+      [class.liked]="liked"
+      (click)="toggleLike($event)"
+      [matTooltip]="liked ? 'Unlike' : 'Like'"
+    >
+      <mat-icon>{{ liked ? 'favorite' : 'favorite_border' }}</mat-icon>
+    </button>
+
+    <!-- Share -->
+    <button
+      class="action-btn share-btn"
+      (click)="openShareDialog($event)"
+      matTooltip="Share"
+    >
+      <mat-icon>share</mat-icon>
+    </button>
+  </div>
+</div>
+
+<!-- Share Dialog -->
+@if (showShareDialog) {
+  <app-share-dialog
+    [link]="link"
+    [title]="title"
+    (closed)="showShareDialog = false"
+  ></app-share-dialog>
+}

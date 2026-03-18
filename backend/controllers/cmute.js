@@ -1,36 +1,32 @@
-import mute_model from '../models/mmute.js';  // Assuming you're using ES6 imports
+import { db } from '../config/firebase.js';
+import { FieldValue } from 'firebase-admin/firestore';
+
+const mutesCol = db.collection('mutes');
 
 const addMute = async (req, res) => {
   const user_id = req.user.id;
   const { baseURL } = req.body;
 
   try {
-    // Check if the user already has a mute document
-    const isUserExist = await mute_model.findOne({ user: user_id });
+    const snapshot = await mutesCol.where('user', '==', user_id).limit(1).get();
 
-    if (isUserExist) {
-      // Check if the URL is already muted for the user
-      const isURLExist = isUserExist.mutedURL.includes(baseURL);  // Use includes to check the array
+    if (!snapshot.empty) {
+      const docRef = snapshot.docs[0].ref;
+      const data = snapshot.docs[0].data();
+      const isURLExist = (data.mutedURL || []).includes(baseURL);
 
       if (isURLExist) {
         return res.status(210).json({ success: false, message: "URL already muted" });
       }
 
-      // If the URL is not already muted, add it to the mutedURLs array
-      await mute_model.findOneAndUpdate(
-        { user: user_id },
-        { $push: { mutedURL: baseURL } }
-      );
+      await docRef.update({ mutedURL: FieldValue.arrayUnion(baseURL) });
       return res.status(202).json({ success: true, message: "Provider muted successfully" });
     }
 
-    // If no mute document exists for the user, create a new one with the mutedURL array
-    const mute = new mute_model({
+    await mutesCol.add({
       user: user_id,
-      mutedURL: [baseURL],  // Initialize mutedURLs with the first URL
+      mutedURL: [baseURL],
     });
-
-    await mute.save();
     return res.status(202).json({ success: true, message: "Provider muted successfully" });
 
   } catch (error) {
@@ -44,22 +40,17 @@ const removeMute = async (req, res) => {
   const { baseURL } = req.body;
 
   try {
-    // Check if the user has a mute document
-    const isUserExist = await mute_model.findOne({ user: user_id });
+    const snapshot = await mutesCol.where('user', '==', user_id).limit(1).get();
 
-    if (isUserExist) {
-      // Check if the URL is muted for the user
-      const isURLExist = isUserExist.mutedURL.includes(baseURL);  // Use includes to check the array
+    if (!snapshot.empty) {
+      const data = snapshot.docs[0].data();
+      const isURLExist = (data.mutedURL || []).includes(baseURL);
 
       if (!isURLExist) {
         return res.status(210).json({ success: false, message: "URL not muted" });
       }
 
-      // Remove the URL from the mutedURLs array
-      await mute_model.findOneAndUpdate(
-        { user: user_id },
-        { $pull: { mutedURL: baseURL } }  // Use $pull to remove the URL
-      );
+      await snapshot.docs[0].ref.update({ mutedURL: FieldValue.arrayRemove(baseURL) });
       return res.status(202).json({ success: true, message: "Provider unmuted successfully" });
     }
 
@@ -71,26 +62,22 @@ const removeMute = async (req, res) => {
   }
 }
 
-
 const getMute = async (req, res) => {
-
   const user_id = req.user.id;
   const { baseURL } = req.body;
 
   try {
+    const snapshot = await mutesCol.where('user', '==', user_id).limit(1).get();
 
-    const isUserExist = await mute_model.findOne({ user: user_id });
-
-    if (isUserExist) {
-
-      const isURLExist = isUserExist.mutedURL.includes(baseURL);
+    if (!snapshot.empty) {
+      const data = snapshot.docs[0].data();
+      const isURLExist = (data.mutedURL || []).includes(baseURL);
 
       if (isURLExist) {
         return res.status(202).json({ success: true, isMuted: true });
       } else {
         return res.status(202).json({ success: true, isMuted: false });
       }
-
     } else {
       return res.status(202).json({ success: true, isMuted: false });
     }
@@ -100,4 +87,5 @@ const getMute = async (req, res) => {
     return res.status(210).json({ success: false, message: "Internal server error while getting mute status" });
   }
 }
+
 export { addMute, removeMute, getMute };

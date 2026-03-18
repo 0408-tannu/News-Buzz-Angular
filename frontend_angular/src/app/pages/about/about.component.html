@@ -1,0 +1,25 @@
+<div class="about-page" [class.dark]="theme.isDark()">
+  <div class="hero-section">
+    <h1>About NewsBuzz</h1>
+    <p class="tagline">
+      Your personalized gateway to the world's news. Discover, follow, and stay informed with the stories that matter to you.
+    </p>
+  </div>
+
+  <div class="features-grid">
+    <mat-card *ngFor="let feature of features" class="feature-card" [class.dark]="theme.isDark()">
+      <mat-icon class="feature-icon">{{ feature.icon }}</mat-icon>
+      <h3>{{ feature.title }}</h3>
+      <p>{{ feature.description }}</p>
+    </mat-card>
+  </div>
+
+  <div class="mission-section">
+    <h2>Our Mission</h2>
+    <p>
+      NewsBuzz was built with a simple goal: make it easy for everyone to access quality news.
+      We believe that staying informed should be effortless, personalized, and enjoyable.
+      Our platform brings together trusted news sources into one clean, modern interface.
+    </p>
+  </div>
+</div>

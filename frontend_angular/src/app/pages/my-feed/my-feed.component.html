@@ -1,0 +1,58 @@
+<div class="myfeed-container" [class.dark]="theme.isDark()">
+  <!-- Search Bar -->
+  <div class="search-wrapper">
+    <div class="search-bar" [class.dark]="theme.isDark()">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        type="text"
+        placeholder="Search from given articles..."
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="onSearchChange()"
+        class="search-input"
+        [class.dark]="theme.isDark()"
+      />
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="articles-grid">
+    <div *ngFor="let s of [1,2,3,4,5,6]" class="skeleton-card" [class.dark]="theme.isDark()">
+      <div class="skeleton skeleton-header"></div>
+      <div class="skeleton skeleton-title"></div>
+      <div class="skeleton skeleton-title short"></div>
+      <div class="skeleton skeleton-actions"></div>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-state">
+    <mat-icon>error_outline</mat-icon>
+    <p>Something went wrong. Please try again later.</p>
+    <button mat-raised-button color="primary" (click)="loadPage()">Try Again</button>
+  </div>
+
+  <!-- Articles Grid -->
+  <div *ngIf="!loading && !error && filteredArticles.length > 0" class="articles-grid">
+    <app-feed-card
+      *ngFor="let article of filteredArticles"
+      [title]="article.title || ''"
+      [link]="article.link || article.url || ''"
+      [time]="article.time || article.datePublished || ''"
+      [providerImg]="article.providerImg || article.provider?.image?.thumbnail?.contentUrl || ''"
+      [providerName]="article.providerName || article.provider?.name || ''"
+      [someText]="article.someText || article.description || ''"
+      [imgURL]="article.imgURL || article.image?.thumbnail?.contentUrl || ''"
+    ></app-feed-card>
+  </div>
+
+  <!-- No Results -->
+  <div *ngIf="!loading && !error && filteredArticles.length === 0" class="empty-state">
+    <mat-icon>rss_feed</mat-icon>
+    <p>No articles found</p>
+  </div>
+
+  <!-- Loading More Indicator -->
+  <div *ngIf="loadingMore" class="loading-more">
+    <div class="spinner"></div>
+  </div>
+</div>

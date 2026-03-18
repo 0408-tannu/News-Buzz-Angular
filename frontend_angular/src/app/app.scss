@@ -1,0 +1,37 @@
+.app-container {
+  display: flex;
+  min-height: 100vh;
+
+  &.dark-mode {
+    background-color: #0d1117;
+    color: #e6edf3;
+  }
+}
+
+main {
+  flex-grow: 1;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 100vh;
+}
+
+.page-content {
+  padding: 12px 20px;
+  animation: fadeInPage 0.35s ease-out;
+
+  &.has-navbar {
+    padding-top: 84px;
+  }
+
+  &.has-navbar.has-topicbar {
+    padding-top: 132px;
+  }
+
+  &.auth-page {
+    padding: 0;
+  }
+}
+
+@keyframes fadeInPage {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}

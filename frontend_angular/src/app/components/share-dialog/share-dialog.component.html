@@ -1,0 +1,26 @@
+<div class="share-overlay" (click)="onOverlayClick($event)">
+  <div class="share-dialog" [class.dark]="theme.isDark()" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="closed.emit()">
+      <mat-icon>close</mat-icon>
+    </button>
+
+    <h3 class="share-title">Share this article</h3>
+
+    <div class="share-buttons">
+      <button class="share-btn" (click)="share('x')" matTooltip="Share on X">
+        <mat-icon>close</mat-icon>
+        <span>X</span>
+      </button>
+
+      <button class="share-btn facebook" (click)="share('facebook')" matTooltip="Share on Facebook">
+        <mat-icon>facebook</mat-icon>
+        <span>Facebook</span>
+      </button>
+
+      <button class="share-btn" (click)="share('copy')" matTooltip="Copy link">
+        <mat-icon>{{ copied ? 'check' : 'content_copy' }}</mat-icon>
+        <span>{{ copied ? 'Copied!' : 'Copy Link' }}</span>
+      </button>
+    </div>
+  </div>
+</div>

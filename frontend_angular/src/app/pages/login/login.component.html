@@ -1,0 +1,101 @@
+<div class="login-page">
+  <!-- Decorative background circles -->
+  <div class="bg-circle bg-circle-1"></div>
+  <div class="bg-circle bg-circle-2"></div>
+  <div class="bg-circle bg-circle-3"></div>
+
+  <div class="login-card">
+    <!-- Logo -->
+    <div class="logo-container">
+      <app-logo [height]="42"></app-logo>
+    </div>
+
+    <!-- Heading -->
+    <h1 class="heading">Welcome back</h1>
+    <p class="subtitle">Sign in to continue to NewsBuzz</p>
+
+    <!-- Error message -->
+    @if (errorMessage) {
+      <div class="error-banner">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorMessage }}</span>
+      </div>
+    }
+
+    <!-- Login Form -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <!-- Email -->
+      <div class="field-group">
+        <label class="field-label">Email*</label>
+        <div class="input-wrapper">
+          <mat-icon class="field-icon">email</mat-icon>
+          <input
+            type="email"
+            formControlName="email"
+            placeholder="you@example.com"
+            class="custom-input"
+          />
+        </div>
+        @if (loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched) {
+          <span class="field-error">Email is required</span>
+        }
+        @if (loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched) {
+          <span class="field-error">Please enter a valid email</span>
+        }
+      </div>
+
+      <!-- Password -->
+      <div class="field-group">
+        <label class="field-label">Password*</label>
+        <div class="input-wrapper">
+          <mat-icon class="field-icon">key</mat-icon>
+          <input
+            [type]="hidePassword ? 'password' : 'text'"
+            formControlName="password"
+            placeholder="Enter your password"
+            class="custom-input"
+          />
+          <button type="button" class="toggle-btn" (click)="togglePasswordVisibility()">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </div>
+        @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
+          <span class="field-error">Password is required</span>
+        }
+        @if (loginForm.get('password')?.hasError('minlength') && loginForm.get('password')?.touched) {
+          <span class="field-error">Password must be at least 8 characters</span>
+        }
+      </div>
+
+      <!-- Forgot Password -->
+      <div class="forgot-password-row">
+        <button type="button" class="forgot-password-link" (click)="forgotPassword()">
+          Forgot password?
+        </button>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="submit-btn"
+        [disabled]="isLoading"
+      >
+        @if (isLoading) {
+          <mat-spinner diameter="22" class="btn-spinner"></mat-spinner>
+        } @else {
+          Log In
+        }
+      </button>
+    </form>
+
+    <!-- Sign up link -->
+    <p class="switch-link">
+      Don't have an account?
+      <a routerLink="/signup" class="link">Sign Up</a>
+    </p>
+  </div>
+</div>
+
+@if (showForgotPassword) {
+  <app-forgot-password (closed)="showForgotPassword = false"></app-forgot-password>
+}

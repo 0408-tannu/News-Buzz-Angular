@@ -1,0 +1,229 @@
+<div class="navbar-wrapper" [class.dark]="theme.isDark()" [style.left]="leftOffset">
+  <!-- Main Navbar Row -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <!-- Logo -->
+      <a routerLink="/" class="navbar-brand">
+        <app-logo [height]="48"></app-logo>
+      </a>
+
+      <!-- Nav links -->
+      <div class="nav-links">
+        <a routerLink="/providers/all" class="nav-link" [class.dark]="theme.isDark()">Providers</a>
+        <a routerLink="/about" class="nav-link" [class.dark]="theme.isDark()">About Us</a>
+      </div>
+
+      <!-- Spacer -->
+      <div class="spacer"></div>
+
+      <!-- Search bar -->
+      <form class="search-bar" [class.dark]="theme.isDark()" (ngSubmit)="onSearch()">
+        <mat-icon class="search-icon-left">search</mat-icon>
+        <input
+          type="text"
+          class="search-input"
+          [class.dark]="theme.isDark()"
+          placeholder="Search for news, topics, sources..."
+          [(ngModel)]="searchQuery"
+          name="searchQuery"
+          autocomplete="off"
+        />
+        <button type="submit" class="search-btn">Search</button>
+        <button type="button" class="dropdown-btn" [class.dark]="theme.isDark()" (click)="toggleAdvanced()">
+          <mat-icon class="dropdown-icon">expand_more</mat-icon>
+        </button>
+
+        <!-- Advanced Search Panel -->
+        <div class="advanced-search-panel" *ngIf="advancedSearchOpen" [class.dark]="theme.isDark()">
+          <h3 class="adv-title">Advanced Search</h3>
+
+          <div class="adv-field">
+            <label class="adv-label">Site</label>
+            <input
+              type="text"
+              class="adv-input"
+              [class.dark]="theme.isDark()"
+              placeholder="Enter site..."
+              [(ngModel)]="advancedSite"
+              [ngModelOptions]="{standalone: true}"
+            />
+          </div>
+
+          <div class="adv-field">
+            <label class="adv-label">Date Range</label>
+            <div class="adv-dates">
+              <div class="adv-date-field">
+                <label class="adv-date-label">Start Date</label>
+                <input
+                  matInput
+                  [matDatepicker]="startPicker"
+                  [(ngModel)]="startDate"
+                  [ngModelOptions]="{standalone: true}"
+                  class="adv-date-input"
+                  [class.dark]="theme.isDark()"
+                  placeholder="mm/dd/yyyy"
+                  [max]="today"
+                />
+                <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+                <mat-datepicker #startPicker></mat-datepicker>
+              </div>
+              <div class="adv-date-field">
+                <label class="adv-date-label">End Date</label>
+                <input
+                  matInput
+                  [matDatepicker]="endPicker"
+                  [(ngModel)]="endDate"
+                  [ngModelOptions]="{standalone: true}"
+                  class="adv-date-input"
+                  [class.dark]="theme.isDark()"
+                  placeholder="mm/dd/yyyy"
+                  [max]="today"
+                />
+                <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+                <mat-datepicker #endPicker></mat-datepicker>
+              </div>
+            </div>
+          </div>
+
+          <button class="adv-submit-btn" (click)="onAdvancedSearch()">Advanced Search</button>
+        </div>
+      </form>
+
+      <!-- Profile icon with tooltip -->
+      <a
+        routerLink="/account"
+        class="profile-btn"
+        matTooltip="My Account"
+        matTooltipPosition="below"
+      >
+        <mat-icon class="profile-icon" [class.dark]="theme.isDark()">account_circle</mat-icon>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Topic Chips Bar (second row) -->
+  <div class="topic-bar" *ngIf="auth.isLoggedIn()">
+    <!-- GLOBAL chip with location filter -->
+    <div class="global-wrapper">
+      <button class="global-chip" (click)="toggleGlobalMenu()">
+        <mat-icon class="global-icon">public</mat-icon>
+        GLOBAL
+        <mat-icon class="global-chevron">expand_more</mat-icon>
+      </button>
+
+      <!-- Location Filter Panel -->
+      <div class="global-panel" *ngIf="globalMenuOpen" [class.dark]="theme.isDark()" (click)="$event.stopPropagation()">
+        <h4 class="global-panel-title">LOCATION FILTER</h4>
+
+        <div class="location-select-wrapper">
+          <select
+            class="location-select"
+            [class.dark]="theme.isDark()"
+            (change)="onCountryChange($event)"
+            [value]="selectedCountry?.isoCode || ''"
+          >
+            <option value="" disabled selected>Country</option>
+            <option *ngFor="let c of countries" [value]="c.isoCode">{{ c.name }}</option>
+          </select>
+          <mat-icon class="select-arrow">arrow_drop_down</mat-icon>
+        </div>
+
+        <div class="location-select-wrapper">
+          <select
+            class="location-select"
+            [class.dark]="theme.isDark()"
+            (change)="onStateChange($event)"
+            [value]="selectedState?.isoCode || ''"
+            [disabled]="!selectedCountry"
+          >
+            <option value="" disabled selected>State</option>
+            <option *ngFor="let s of states" [value]="s.isoCode">{{ s.name }}</option>
+          </select>
+          <mat-icon class="select-arrow">arrow_drop_down</mat-icon>
+        </div>
+
+        <div class="location-select-wrapper">
+          <select
+            class="location-select"
+            [class.dark]="theme.isDark()"
+            (change)="onCityChange($event)"
+            [value]="selectedCity?.name || ''"
+            [disabled]="!selectedState"
+          >
+            <option value="" disabled selected>City</option>
+            <option *ngFor="let c of cities" [value]="c.name">{{ c.name }}</option>
+          </select>
+          <mat-icon class="select-arrow">arrow_drop_down</mat-icon>
+        </div>
+
+        <button
+          class="localized-news-btn"
+          (click)="findLocalizedNews()"
+          [disabled]="!selectedCountry"
+        >
+          Find Localized News
+          <mat-icon>travel_explore</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading skeleton chips -->
+    <ng-container *ngIf="quickSearchLoading">
+      <div *ngFor="let s of [1,2,3,4,5]" class="chip-skeleton" [style.width.px]="65 + s * 12"></div>
+    </ng-container>
+
+    <!-- Topic chips -->
+    <ng-container *ngIf="!quickSearchLoading">
+      <button
+        *ngFor="let text of quickSearchText"
+        class="topic-chip"
+        [class.dark]="theme.isDark()"
+        [class.active]="selectedTopic === text"
+        (click)="onTopicClick(text)"
+        (contextmenu)="openRemoveDialog($event, text)"
+      >
+        {{ text }}
+      </button>
+    </ng-container>
+
+    <!-- Add Topic Button -->
+    <div class="add-topic-wrapper">
+      <button
+        class="add-topic-btn"
+        [class.dark]="theme.isDark()"
+        (click)="showAddBox = !showAddBox"
+      >
+        <mat-icon>add</mat-icon>
+        Add Topic
+      </button>
+
+      <!-- Add Topic Popup -->
+      <div class="add-topic-popup" *ngIf="showAddBox" [class.dark]="theme.isDark()" (click)="$event.stopPropagation()">
+        <input
+          type="text"
+          class="add-topic-input"
+          [class.dark]="theme.isDark()"
+          placeholder="e.g. Technology, Sports..."
+          [(ngModel)]="newQuickSearch"
+          [ngModelOptions]="{standalone: true}"
+          (keydown.enter)="addQuickSearch()"
+        />
+        <button class="add-topic-submit" (click)="addQuickSearch()">Add Topic</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Remove Topic Confirmation Dialog (outside navbar for proper centering) -->
+<div class="remove-dialog-overlay" *ngIf="removeDialogOpen" (click)="removeDialogOpen = false">
+  <div class="remove-dialog" [class.dark]="theme.isDark()" (click)="$event.stopPropagation()">
+    <h3 class="remove-dialog-title">Remove Topic</h3>
+    <p class="remove-dialog-msg">
+      Are you sure you want to remove "<span class="remove-dialog-topic">{{ removeDialogText }}</span>"?
+    </p>
+    <div class="remove-dialog-actions">
+      <button class="remove-dialog-cancel" [class.dark]="theme.isDark()" (click)="removeDialogOpen = false">Cancel</button>
+      <button class="remove-dialog-confirm" (click)="confirmRemoveTopic()">Remove</button>
+    </div>
+  </div>
+</div>

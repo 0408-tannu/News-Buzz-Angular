@@ -1,0 +1,80 @@
+<div
+  class="news-card"
+  [class.dark]="theme.isDark()"
+  (mouseenter)="hovered = true"
+  (mouseleave)="hovered = false"
+>
+  <div class="card-content">
+    <!-- Provider info -->
+    <div class="provider-row">
+      <img
+        *ngIf="providerImg"
+        [src]="providerImg"
+        alt="Provider Logo"
+        class="provider-img"
+        (error)="$any($event.target).style.display = 'none'"
+      />
+      <span *ngIf="providerName" class="provider-name">{{ providerName }}</span>
+    </div>
+
+    <!-- Title -->
+    <h3 class="article-title" (click)="onCardClick()">
+      {{ title }}
+    </h3>
+
+    <!-- Description -->
+    <p *ngIf="someText" class="article-desc">{{ someText }}</p>
+  </div>
+
+  <!-- Bottom row: time + action buttons -->
+  <div class="bottom-row">
+    <span class="time">{{ time }}</span>
+
+    <div class="action-buttons" [class.visible]="hovered">
+      <button class="action-btn" (click)="toggleBookmark($event)" [matTooltip]="'Save'">
+        <mat-icon>{{ bookmarked ? 'bookmark' : 'bookmark_border' }}</mat-icon>
+      </button>
+
+      <button class="action-btn like-btn" [class.liked]="liked" (click)="toggleLike($event)" [matTooltip]="'Like'">
+        <mat-icon>{{ liked ? 'favorite' : 'favorite_border' }}</mat-icon>
+      </button>
+      <span *ngIf="likeCount > 0" class="count">{{ likeCount }}</span>
+
+      <button class="action-btn" (click)="openComments($event)" [matTooltip]="'Comments'">
+        <mat-icon>chat_bubble_outline</mat-icon>
+      </button>
+      <span *ngIf="commentCount > 0" class="count">{{ commentCount }}</span>
+
+      <button class="action-btn" (click)="openShareDialog($event)" [matTooltip]="'Share'">
+        <mat-icon>share</mat-icon>
+      </button>
+
+      @if (showMute) {
+        <button
+          class="action-btn mute-btn"
+          [class.muted]="muted"
+          (click)="toggleMute($event)"
+          [matTooltip]="muted ? 'Unmute source' : 'Mute source'"
+        >
+          <mat-icon>{{ muted ? 'volume_off' : 'volume_up' }}</mat-icon>
+        </button>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Share Dialog -->
+@if (showShareDialog) {
+  <app-share-dialog
+    [link]="link"
+    (closed)="showShareDialog = false"
+  ></app-share-dialog>
+}
+
+<!-- Comments Panel -->
+<app-comments-menu
+  [articleURL]="link"
+  [isOpen]="showComments"
+  (closed)="showComments = false"
+  (commentCountChanged)="onCommentCountChanged($event)"
+></app-comments-menu>

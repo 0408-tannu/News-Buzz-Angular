@@ -1,137 +1,112 @@
-// const usermodel = require("../models/muser");
-// const quickSearch_model = require("../models/mquicksearch");
-// const verificationcodemodel = require("../models/mverificationcode");
-// const jsonwebtoken = require("jsonwebtoken");
-// const CryptoJS = require('crypto-js');
-// const dotenv = require('dotenv');
-// const express = require("express");
-
-import {usermodel} from "../models/muser.js";
-import {quickSearch_model} from "../models/mquicksearch.js";
-import {verificationcodemodel} from "../models/mverificationcode.js";
+import { db } from '../config/firebase.js';
+import { FieldValue } from 'firebase-admin/firestore';
 import jsonwebtoken from "jsonwebtoken";
 import CryptoJS from 'crypto-js';
 import dotenv from 'dotenv';
-import express from "express";
-
-
-
-const app = express();
 
 dotenv.config();
 
-// const cloudinary_v2 = require('../utils/cloudinary').v2;
-
-import { v2 as cloudinary_v2 } from '../utils/cloudinary.js';
+const usersCol = db.collection('users');
+const quickSearchesCol = db.collection('quickSearches');
+const verificationCodesCol = db.collection('verificationCodes');
 
 const logInPost = async (req, res) => {
+  console.log("[LOGIN] Request received, body:", JSON.stringify(req.body));
 
-  console.log("req.body", req.body);
+  const { email, password } = req.body;
 
-  const { email, password, role } = req.body;
-
-
-  if (!role || !email || !password) {
+  if (!email || !password) {
+    console.log("[LOGIN] Missing fields - email:", !!email, "password:", !!password);
     return res.status(210).json({ success: false, message: "All fields required" });
   }
 
-  console.log(req.body.email);
+  console.log("[LOGIN] Looking up user:", email);
 
-  const userExist = await usermodel.findOne({
-    email, role
-  });
+  const snapshot = await usersCol.where('email', '==', email).limit(1).get();
 
-  if (!userExist) {
+  if (snapshot.empty) {
+    console.log("[LOGIN] User not found:", email);
     return res.status(210).json({ success: false, message: "User not exist" });
   }
 
-  // console.log(req.body.email);
-  // Decrypt the stored password
+  const userDoc = snapshot.docs[0];
+  const userExist = { ...userDoc.data(), _id: userDoc.id };
+  console.log("[LOGIN] User found:", userExist.username);
+
   const decryptedPwd = CryptoJS.AES.decrypt(password, process.env.PWD_SECRET).toString(CryptoJS.enc.Utf8);
-  console.log("decryptedPwd", decryptedPwd);
-
   const decrypteuserExistPwd = CryptoJS.AES.decrypt(userExist.password, process.env.PWD_SECRET).toString(CryptoJS.enc.Utf8);
-  console.log("decrypteuserExistPwd", decrypteuserExistPwd);
-
 
   if (decryptedPwd !== decrypteuserExistPwd || decryptedPwd === "" || decrypteuserExistPwd === "") {
+    console.log("[LOGIN] Invalid password for:", email);
     return res.status(210).json({ success: false, message: "Invalid password" });
   }
 
   const token = jsonwebtoken.sign({ id: userExist._id, username: userExist.username }, process.env.JWT_SECRET);
+  console.log("[LOGIN] Success for:", email);
 
   return res.status(202).json({ success: true, message: "User signed in successfully", token: token });
-
 };
 
 
 const signUpPost = async (req, res) => {
-  const { username, email, password, role } = req.body;
+  console.log("[SIGNUP] Request received, body:", JSON.stringify(req.body));
 
-  if (!username || !email || !password || !role) {
-    return res.status(210).json({ success: false, message: "Please fill all the fields" });   // WRITE RETURN OTHERWISE ERROR
+  const { username, email, password } = req.body;
+
+  if (!username || !email || !password) {
+    console.log("[SIGNUP] Missing fields - username:", !!username, "email:", !!email, "password:", !!password);
+    return res.status(210).json({ success: false, message: "Please fill all the fields" });
   }
   try {
+    console.log("[SIGNUP] Checking if user exists:", email);
+    const snapshot = await usersCol.where('email', '==', email).limit(1).get();
 
-    const userExist = await usermodel.findOne({ email, role });
-
-    if (userExist) {
-      return res.status(210).json({ success: false, error: "User already exists for given role" });
+    if (!snapshot.empty) {
+      console.log("[SIGNUP] User already exists:", email);
+      return res.status(210).json({ success: false, error: "User already exists" });
     }
 
-    let cloudinaryURL = "";
-    if (role === "PROVIDER") {
-      app.use(express.json(
-        {
-          limit: '50mb',
-        }
-      ));
-      const cloudinary_res = await cloudinary_v2.uploader.upload(req.file.path, {
-        folder: 'news-aggregator',
-        // use_filename: `news-aggregator-${username}--- ${Date.now()}`,
-        resource_type: "auto",
-      });
-      // console.log(cloudinary_res.secure_url);
-      cloudinaryURL = cloudinary_res.secure_url;
-    }
+    console.log("[SIGNUP] Creating user:", username, email);
+    const userRef = await usersCol.add({
+      username, email, password,
+      topics: [],
+      createdAt: FieldValue.serverTimestamp(),
+    });
 
+    await quickSearchesCol.add({
+      user_id: userRef.id,
+      quickSearchText: ['AI', 'FINANCE', 'TECH', 'EDUCATION', 'ENTERTAINMENT', 'CLIMATE CHANGE', 'SOCIETY', 'CULTURE', 'SPORTS'],
+      createdAt: FieldValue.serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp(),
+    });
 
-    const user = new usermodel({ username, email, password, role, certificate: cloudinaryURL });
-    await user.save();
+    const token = jsonwebtoken.sign({ id: userRef.id, username }, process.env.JWT_SECRET);
 
-
-    if (role === "READER") {
-      const quickSearch = new quickSearch_model({
-        user_id: user._id, quickSearchText: ['AI', 'FINANCE', 'TECH', 'EDUCATION', 'ENTERTAINMENT', 'CLIMATE CHANGE', 'SOCIETY', 'CULTURE', 'SPORTS'
-        ]
-      });
-      await quickSearch.save();
-    }
-
-
-    const token = jsonwebtoken.sign({ id: user._id, username: user.username, role: user.role }, process.env.JWT_SECRET);
-
-    // console.log("token", token);
-
-    const verificationCode = new verificationcodemodel({
+    await verificationCodesCol.add({
       username,
       email,
-      code: "123456"
-    })
-    await verificationCode.save();
+      code: "123456",
+      createdAt: FieldValue.serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp(),
+    });
 
-
+    console.log("[SIGNUP] Success for:", email, "userId:", userRef.id);
     return res.status(202).json({ success: true, message: "user registered successfully", token: token });
   } catch (err) {
-    console.log(err);
-    return res.status(210).json({ success: false, message: "Error in signup", err: err });
+    console.error("[SIGNUP] Error:", err);
+    return res.status(210).json({ success: false, message: "Error in signup", err: err.message });
   }
 };
 
 
 const getUserProfile = async (req, res) => {
   try {
-    const user = await usermodel.findById(req.user.id).select("-password");
+    const userDoc = await usersCol.doc(req.user.id).get();
+    if (!userDoc.exists) {
+      return res.status(210).json({ success: false, message: "User not found" });
+    }
+    const user = { ...userDoc.data(), _id: userDoc.id };
+    delete user.password;
     return res.status(202).json({ success: true, user: user });
   } catch (error) {
     return res.status(210).json({ success: false, message: error.message });
@@ -141,16 +116,14 @@ const getUserProfile = async (req, res) => {
 
 const updateUserProfile = async (req, res) => {
   try {
-    const user =
-      await usermodel.findByIdAndUpdate
-        (req.user.id,
-          req.body,
-          { new: true }
-        );
+    const userRef = usersCol.doc(req.user.id);
+    const userDoc = await userRef.get();
 
-    if (!user) {
+    if (!userDoc.exists) {
       return res.status(210).json({ success: false, message: "User not found" });
     }
+
+    await userRef.update(req.body);
     return res.status(202).json({ success: true, message: "Profile Updated Successfully" });
   } catch (error) {
     return res.status(210).json({ success: false, message: error.message });
@@ -159,23 +132,15 @@ const updateUserProfile = async (req, res) => {
 
 
 const isUserExistWhenSignUp = async (req, res) => {
-  const { email, role } = req.body;
-  const userExist = await usermodel.findOne({ email, role });
-  if (userExist) {
-    return res.status(210).json({ success: false, message: "User already exists for given role" });
+  console.log("[CHECK_USER] Checking email:", req.body.email);
+  const { email } = req.body;
+  const snapshot = await usersCol.where('email', '==', email).limit(1).get();
+  if (!snapshot.empty) {
+    console.log("[CHECK_USER] User already exists:", email);
+    return res.status(210).json({ success: false, message: "User already exists" });
   }
+  console.log("[CHECK_USER] User does not exist:", email);
   return res.status(202).json({ success: true, message: "User does not exist" });
 }
 
-// module.exports = { logInPost, signUpPost,isUserExistWhenSignUp, getUserProfile, updateUserProfile };
-
-// const cuser = { logInPost, signUpPost, isUserExistWhenSignUp, getUserProfile, updateUserProfile };
-
-// export default cuser;
-
-const UserRole = async (req, res) => {
-  const user = await usermodel.findById(req.user.id);
-  return res.status(202).json({ success: true, role: user.role });
-}
-
-export default { logInPost, signUpPost, isUserExistWhenSignUp, getUserProfile, updateUserProfile, UserRole };
+export default { logInPost, signUpPost, isUserExistWhenSignUp, getUserProfile, updateUserProfile };

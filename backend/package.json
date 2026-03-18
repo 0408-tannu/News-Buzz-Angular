@@ -14,7 +14,6 @@
   "license": "ISC",
   "dependencies": {
     "buffer": "^6.0.3",
-    "cloudinary": "^2.5.0",
     "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
     "cryptojs": "^2.5.3",
@@ -23,8 +22,7 @@
     "google-news-decoder": "^1.0.1",
     "googleapis": "^144.0.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.7.0",
-    "multer": "^1.4.5-lts.1",
+    "firebase-admin": "^13.0.0",
     "nodemailer": "^6.9.15",
     "nodemon": "^3.1.7",
     "puppeteer": "^24.36.0",
