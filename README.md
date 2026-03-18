@@ -1,107 +1,251 @@
-# NEWSBUZZ
+# News Buzz - Angular
 
-Welcome to the **NEWSBUZZ**, a one-stop platform to access, explore, and interact with diverse news content from multiple channels. Our mission is to make news discovery easy, engaging, and tailored to individual preferences.
+A full-stack news aggregation and personalization platform that delivers curated news from multiple sources, tailored to individual user preferences.
+
+![Angular](https://img.shields.io/badge/Angular-21-red?logo=angular)
+![Node.js](https://img.shields.io/badge/Node.js-Express-green?logo=node.js)
+![Firebase](https://img.shields.io/badge/Firebase-Firestore-orange?logo=firebase)
 
 ---
 
 ## Table of Contents
 
-1. [About the Project](#about-the-project)  
-2. [Features](#features)  
-3. [Technologies Used](#technologies-used)  
-4. [Usage](#usage)  
-5. [Acknowledgments](#acknowledgments)  
+1. [About the Project](#about-the-project)
+2. [Features](#features)
+3. [Tech Stack](#tech-stack)
+4. [Project Structure](#project-structure)
+5. [Getting Started](#getting-started)
+6. [Environment Variables](#environment-variables)
+7. [API Endpoints](#api-endpoints)
+8. [Firestore Collections](#firestore-collections)
+9. [Deployment](#deployment)
+10. [Contributors](#contributors)
 
 ---
 
 ## About the Project
 
-The **NEWSBUZZ** bridges the gap between readers and high-quality news from multiple sources. Users can personalize their experience by following preferred channels, bookmarking articles, and engaging with content through likes, comments, and shares.
+**News Buzz** bridges the gap between readers and high-quality news from multiple sources. Users can personalize their experience by following preferred channels, bookmarking articles, and engaging with content through likes, comments, and shares. The platform uses Google News RSS feeds to aggregate trending and relevant stories.
 
 ---
 
 ## Features
 
-- 📰 **Diverse News Channels**: Explore news from multiple sources in one place.  
-- 🔍 **Search & Filters**: Search news by topics, keywords, categories, or date.  
-- 🏷️ **Personalized Feed**: Follow/unfollow channels or mute them to curate your feed.  
-- 💬 **Article Engagement**: Like, share, and comment on articles.  
-- 📌 **Bookmarks**: Save articles for later reference.  
-- 🕒 **Reading History**: Access previously read articles.  
-- 🔒 **User Authentication**: Secure signup/login options with email verification.   
-- 🔔 **Notifications**: Stay updated with new articles and interactions.  
+- **Top Stories** - Trending news from Google News, localized by country
+- **Advanced Search** - Search by keywords, topics, locations, and date ranges
+- **Personalized Feed** - Curated feed based on search history and topic preferences
+- **News Providers** - Browse, follow, and mute news sources
+- **Bookmarks** - Save articles for later reading
+- **Reading History** - Track and revisit previously read articles
+- **Comments & Likes** - Engage with articles through comments and likes
+- **Share Articles** - Share news via social media and direct links
+- **User Authentication** - Secure signup/login with email verification
+- **Dark/Light Theme** - Toggle between dark and light modes
+- **Responsive Design** - Optimized for desktop and mobile
 
 ---
 
-## Technologies Used
+## Tech Stack
 
-- **Frontend**: HTML, CSS, JavaScript (React)  
-- **Backend**: Node.js, Express, MongoDB  
-- **Authentication**: JWT-based authentication, Email OTP verification  
-- **Hosting**: Render (Frontend and Backend)  
-- **Testing**:   
-  - Jest for unit testing  
-  - Selenium IDE for GUI testing  
-  - ApacheJmeter for load testing
-- **Documentation**: 
-  - User stories, class diagram, Object design, System design, Sequence diagram and Software requirement specifications
+### Frontend
+
+| Technology | Purpose |
+|---|---|
+| Angular 21 | Frontend framework |
+| TypeScript | Type-safe development |
+| Angular Material | UI component library |
+| RxJS | Reactive state management |
+| SCSS | Styling |
+| Crypto-JS | Client-side password encryption |
+
+### Backend
+
+| Technology | Purpose |
+|---|---|
+| Node.js + Express | REST API server |
+| Firebase Firestore | NoSQL database |
+| JWT | Authentication tokens |
+| Nodemailer + Resend | Email services |
+| RSS Parser | Google News RSS feed parsing |
+| Puppeteer | Fallback web scraping |
 
 ---
 
-## Usage
+## Project Structure
 
-The platform is deployed and accessible via the following link:  
-[NEWSBUZZ](https://normal-frontend.onrender.com/)
+```
+News-Buzz-Angular/
+├── backend/
+│   ├── algorithms/          # News fetching & feed generation
+│   │   ├── myFeed.js        # Personalized feed algorithm
+│   │   ├── top_stories.js   # Trending stories
+│   │   ├── search.js        # Search algorithm
+│   │   └── ...
+│   ├── config/
+│   │   └── firebase.js      # Firestore connection
+│   ├── controllers/         # Route handlers
+│   ├── middleware/
+│   │   └── checkAuth.js     # JWT authentication middleware
+│   ├── routes/              # API route definitions
+│   └── index.js             # Express server entry point
+│
+├── frontend_angular/
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── components/  # Reusable UI components
+│   │   │   │   ├── navbar/
+│   │   │   │   ├── sidebar/
+│   │   │   │   ├── news-card/
+│   │   │   │   ├── feed-card/
+│   │   │   │   ├── bookmark-card/
+│   │   │   │   ├── comments-menu/
+│   │   │   │   ├── share-dialog/
+│   │   │   │   └── ...
+│   │   │   ├── pages/       # Route pages
+│   │   │   │   ├── home/
+│   │   │   │   ├── login/
+│   │   │   │   ├── signup/
+│   │   │   │   ├── my-feed/
+│   │   │   │   ├── search-results/
+│   │   │   │   ├── bookmark/
+│   │   │   │   ├── history/
+│   │   │   │   └── ...
+│   │   │   ├── services/    # API, Auth, Theme services
+│   │   │   └── app.routes.ts
+│   │   ├── environments/    # Dev & prod configs
+│   │   └── styles.scss      # Global styles
+│   ├── angular.json
+│   └── package.json
+```
 
-For local setup, follow these steps:  
+---
+
+## Getting Started
 
 ### Prerequisites
 
-1. Node.js installed on your system  
-2. MongoDB running locally or on a cloud service  
-3. Git installed  
+- **Node.js** (v18 or higher)
+- **npm** (v9 or higher)
+- **Angular CLI** - `npm install -g @angular/cli`
+- **Firebase** project with Firestore enabled
 
-### Steps
+### Installation
 
-1. Clone the repository:  
-   ```bash
-   git clone https://github.com/Kartavya231/G-15_NEWSBUZZ.git
-2. Set up .env and other files:
+**1. Clone the repository**
 
+```bash
+git clone https://github.com/0408-tannu/News-Buzz-Angular.git
+cd News-Buzz-Angular
+```
 
--  Create a **/src/config.js** in the client directory with the following
+**2. Setup Backend**
 
-   - BACKEND_API: "YOUR_BACKEND_API",
-   - BACKEND_API_SCRAP: 'YOUR_BACKEND_API_SCRAP(vercel)',
-   - PWD_SECRET: 'YOUR_PWD_SECRET'
+```bash
+cd backend
+npm install
+```
 
+Create a `.env` file in the `backend/` directory (see [Environment Variables](#environment-variables)).
 
--  Create a **.env** in the server directory with the following
+```bash
+npm start
+```
 
-   - PORT = (Enter Port)
-   - MONGO_URL = (Enter MongoDB URL)
-   - JWT_SECRET = (Enter JWT token Secret key)
-   - PWD_SECRET = (Enter Secret key to Hash Password)
-   - CLOUDINARY_CLOUD_NAME = (Enter Cloudinary provided cloud name)  
-   - CLOUDINARY_API_KEY = (Enter Cloudinary provided api key)
-   - CLOUDINARY_API_SECRET = (Enter Cloudinary provided api secret)
-   - CLIENT_ID = (Enter Google provided client id)
-   - CLIENT_SECRET = (Enter Google provided client secret)
-   - REDIRECT_URI = (Enter Google provided Redirect URL)
-   - REFRESH_TOKEN = (Enter Google provided Refresh token)
+Backend runs on `http://localhost:9000`
 
--  Create a **.env** in the client directory
-   - LOCAL_BACKEND_URL=http://localhost:3000
-   - LOCAL_FRONTEND_URL=http://localhost:9000
-     
-3. Set up Backend:
-    ```bash
-    $ cd backend
-    $ npm install
-    $ npm run dev 
-4. Set up frontend:
-    ```bash
-    $ cd frontend
-    $ npm install
-    $ npm run start
+**3. Setup Frontend**
+
+```bash
+cd frontend_angular
+npm install
+ng serve
+```
+
+Frontend runs on `http://localhost:4200`
+
 ---
+
+## Environment Variables
+
+Create a `backend/.env` file with the following:
+
+```env
+PORT=9000
+JWT_SECRET=your_jwt_secret_key
+PWD_SECRET=your_password_encryption_key
+
+# Firebase
+FIREBASE_PROJECT_ID=your_firebase_project_id
+FIREBASE_CLIENT_EMAIL=your_firebase_client_email
+FIREBASE_PRIVATE_KEY=your_firebase_private_key
+
+# Email Service
+EMAIL_USER=your_email@gmail.com
+EMAIL_APP_PASS=your_email_app_password
+
+# Cloudinary (for image uploads)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+```
+
+---
+
+## API Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|:---:|
+| POST | `/api/user/signup` | Register new user | No |
+| POST | `/api/user/login` | Login user | No |
+| GET | `/api/user/profile` | Get user profile | Yes |
+| GET | `/api/algorithms/topstories` | Get trending stories | No |
+| GET | `/api/search` | Search news articles | Yes |
+| GET | `/api/myfeed` | Get personalized feed | Yes |
+| POST | `/api/userdo/bookmark` | Bookmark an article | Yes |
+| POST | `/api/userdo/like` | Like an article | Yes |
+| POST | `/api/userdo/comment` | Comment on an article | Yes |
+| POST | `/api/userdo/follow` | Follow a news provider | Yes |
+| GET | `/api/provider/all` | Get all news providers | No |
+| GET | `/api/provider/following` | Get followed providers | Yes |
+| POST | `/api/mute` | Mute a news provider | Yes |
+| GET | `/api/history` | Get reading history | Yes |
+| POST | `/api/changepassword` | Change password | Yes |
+| POST | `/api/sendemail` | Send verification email | No |
+
+---
+
+## Firestore Collections
+
+| Collection | Description |
+|---|---|
+| `users` | User profiles and credentials |
+| `bookmarks` | Saved articles per user |
+| `likes` | Article likes |
+| `comments` | Article comments |
+| `newsProviders` | News source metadata and logos |
+| `quickSearches` | Saved search queries |
+| `searchLocations` | Search history with frequency tracking |
+| `topStories` | Cached trending stories |
+| `mutes` | Muted providers per user |
+| `history` | Reading history |
+| `verificationCodes` | Email verification codes |
+
+---
+
+## Deployment
+
+- **Backend**: Deployed on [Render](https://render.com)
+- **Frontend**: Can be deployed on [Vercel](https://vercel.com) or [Firebase Hosting](https://firebase.google.com/docs/hosting)
+
+**Build frontend for production:**
+
+```bash
+cd frontend_angular
+ng build --configuration production
+```
+
+---
+
+## Contributors
+
+- **Tanisha Vaghani** - [GitHub](https://github.com/0408-tannu)
