@@ -180,7 +180,7 @@
         [class.dark]="theme.isDark()"
         [class.active]="selectedTopic === text"
         (click)="onTopicClick(text)"
-        (contextmenu)="openRemoveDialog($event, text)"
+        (contextmenu)="openContextMenu($event, text)"
       >
         {{ text }}
       </button>
@@ -214,7 +214,27 @@
   </div>
 </div>
 
-<!-- Remove Topic Confirmation Dialog (outside navbar for proper centering) -->
+<!-- Right-click Context Menu for Topic Chips -->
+<div class="context-menu-overlay" *ngIf="contextMenuOpen" (click)="closeContextMenu()">
+  <div
+    class="context-menu"
+    [class.dark]="theme.isDark()"
+    [style.left.px]="contextMenuX"
+    [style.top.px]="contextMenuY"
+    (click)="$event.stopPropagation()"
+  >
+    <button class="context-menu-item" (click)="onContextUpdate()">
+      <mat-icon>edit</mat-icon>
+      <span>Update</span>
+    </button>
+    <button class="context-menu-item remove" (click)="onContextRemove()">
+      <mat-icon>delete</mat-icon>
+      <span>Remove</span>
+    </button>
+  </div>
+</div>
+
+<!-- Remove Topic Confirmation Dialog -->
 <div class="remove-dialog-overlay" *ngIf="removeDialogOpen" (click)="removeDialogOpen = false">
   <div class="remove-dialog" [class.dark]="theme.isDark()" (click)="$event.stopPropagation()">
     <h3 class="remove-dialog-title">Remove Topic</h3>
@@ -224,6 +244,29 @@
     <div class="remove-dialog-actions">
       <button class="remove-dialog-cancel" [class.dark]="theme.isDark()" (click)="removeDialogOpen = false">Cancel</button>
       <button class="remove-dialog-confirm" (click)="confirmRemoveTopic()">Remove</button>
+    </div>
+  </div>
+</div>
+
+<!-- Update Topic Dialog -->
+<div class="remove-dialog-overlay" *ngIf="updateDialogOpen" (click)="updateDialogOpen = false">
+  <div class="remove-dialog" [class.dark]="theme.isDark()" (click)="$event.stopPropagation()">
+    <h3 class="remove-dialog-title">Update Topic</h3>
+    <p class="remove-dialog-msg">
+      Rename "<span class="remove-dialog-topic">{{ updateDialogOldText }}</span>" to:
+    </p>
+    <input
+      type="text"
+      class="update-topic-input"
+      [class.dark]="theme.isDark()"
+      [(ngModel)]="updateDialogNewText"
+      [ngModelOptions]="{standalone: true}"
+      (keydown.enter)="confirmUpdateTopic()"
+      autofocus
+    />
+    <div class="remove-dialog-actions">
+      <button class="remove-dialog-cancel" [class.dark]="theme.isDark()" (click)="updateDialogOpen = false">Cancel</button>
+      <button class="remove-dialog-confirm update" (click)="confirmUpdateTopic()">Update</button>
     </div>
   </div>
 </div>

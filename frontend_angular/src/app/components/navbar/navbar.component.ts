@@ -70,9 +70,20 @@ export class NavbarComponent implements OnInit {
 
   defaultTopics = ['AI', 'FINANCE', 'TECH', 'EDUCATION', 'ENTERTAINMENT', 'CLIMATE CHANGE', 'SOCIETY', 'CULTURE', 'SPORTS'];
 
+  // Context menu for topic chips
+  contextMenuOpen = false;
+  contextMenuX = 0;
+  contextMenuY = 0;
+  contextMenuText = '';
+
   // Remove topic dialog
   removeDialogOpen = false;
   removeDialogText = '';
+
+  // Update topic dialog
+  updateDialogOpen = false;
+  updateDialogOldText = '';
+  updateDialogNewText = '';
 
   // GLOBAL location filter
   globalMenuOpen = false;
@@ -125,15 +136,68 @@ export class NavbarComponent implements OnInit {
     }
   }
 
-  openRemoveDialog(event: MouseEvent, text: string): void {
+  openContextMenu(event: MouseEvent, text: string): void {
     event.preventDefault();
-    this.removeDialogText = text;
+    this.contextMenuText = text;
+    this.contextMenuX = event.clientX;
+    this.contextMenuY = event.clientY;
+    this.contextMenuOpen = true;
+  }
+
+  closeContextMenu(): void {
+    this.contextMenuOpen = false;
+  }
+
+  onContextRemove(): void {
+    this.closeContextMenu();
+    this.removeDialogText = this.contextMenuText;
     this.removeDialogOpen = true;
+  }
+
+  onContextUpdate(): void {
+    this.closeContextMenu();
+    this.updateDialogOldText = this.contextMenuText;
+    this.updateDialogNewText = this.contextMenuText;
+    this.updateDialogOpen = true;
   }
 
   confirmRemoveTopic(): void {
     this.removeQuickSearch(this.removeDialogText);
     this.removeDialogOpen = false;
+  }
+
+  confirmUpdateTopic(): void {
+    const newText = this.updateDialogNewText.trim();
+    if (!newText || newText === this.updateDialogOldText) {
+      this.updateDialogOpen = false;
+      return;
+    }
+
+    this.api.post<any>('/api/quicksearch/update', {
+      oldText: this.updateDialogOldText,
+      newText: newText,
+    }).subscribe({
+      next: (res) => {
+        if (res?.caught) {
+          this.router.navigate(['/login']);
+          return;
+        }
+        if (res?.success) {
+          const index = this.quickSearchText.indexOf(this.updateDialogOldText);
+          if (index !== -1) {
+            this.quickSearchText[index] = newText;
+            this.quickSearchText = [...this.quickSearchText];
+          }
+          this.toast('Topic updated successfully!');
+        } else {
+          this.toast(res?.message || 'Error updating topic');
+        }
+      },
+      error: () => {
+        this.toast('Error updating topic');
+      }
+    });
+    this.updateDialogOpen = false;
   }
 
   fetchQuickSearch(): void {

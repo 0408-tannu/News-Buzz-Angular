@@ -35,8 +35,18 @@ const Scrap = async ({
   try {
     // Build search query
     let query = searchText || "news";
-    if (site) query += ` site:${site}`;
     if (location) query += ` ${location}`;
+
+    // When filtering by site, add provider name to query for better RSS results
+    // Google News RSS doesn't support site: operator, so we search by name
+    // Compare without spaces (e.g., "India TV News" matches "indiatvnews")
+    if (site) {
+      const siteName = site.replace(/^www\./, '').replace(/\.\w+$/, '');
+      const queryCompact = query.toLowerCase().replace(/\s+/g, '');
+      if (!queryCompact.includes(siteName.toLowerCase())) {
+        query += ` ${siteName}`;
+      }
+    }
 
     const encodedQuery = encodeURIComponent(query);
 
@@ -47,6 +57,19 @@ const Scrap = async ({
     console.log(`[Search RSS] Fetching: ${rssUrl}`);
 
     const feed = await parser.parseURL(rssUrl);
+
+    // Parse date range from tbs parameter (format: cdr:1,cd_min:M/D/YYYY,cd_max:M/D/YYYY)
+    let dateMin = null;
+    let dateMax = null;
+    if (tbs) {
+      const minMatch = tbs.match(/cd_min:(\d+\/\d+\/\d+)/);
+      const maxMatch = tbs.match(/cd_max:(\d+\/\d+\/\d+)/);
+      if (minMatch) dateMin = new Date(minMatch[1]);
+      if (maxMatch) {
+        dateMax = new Date(maxMatch[1]);
+        dateMax.setHours(23, 59, 59, 999); // Include the entire end date
+      }
+    }
 
     // Get muted site domains for filtering
     let mutedDomains = [];
@@ -76,6 +99,7 @@ const Scrap = async ({
           link: articleLink,
           imgURL: null,
           time: getRelativeTime(item.pubDate),
+          pubDate: item.pubDate,
           providerImg: getProviderLogo(providerName, articleLink),
           providerName: providerName,
         };
@@ -91,11 +115,38 @@ const Scrap = async ({
             return false;
           }
         }
+        // Filter by provider site: compare against providerName since RSS links
+        // are Google News redirects (all point to news.google.com)
+        // Normalize by removing spaces for comparison (e.g., "India TV News" vs "indiatvnews")
+        if (site) {
+          const siteClean = site.replace(/^www\./, '').toLowerCase();
+          const siteNameOnly = siteClean.replace(/\.\w+$/, '');
+          const providerLower = (article.providerName || '').toLowerCase();
+          const providerCompact = providerLower.replace(/\s+/g, '');
+          const matches =
+            providerLower.includes(siteNameOnly) ||
+            providerCompact.includes(siteNameOnly) ||
+            siteNameOnly.includes(providerCompact) ||
+            siteClean.includes(providerCompact);
+          if (!matches) {
+            return false;
+          }
+        }
+        // Filter by date range if tbs was provided
+        if (dateMin || dateMax) {
+          const pubDate = article.pubDate ? new Date(article.pubDate) : null;
+          if (!pubDate) return false;
+          if (dateMin && pubDate < dateMin) return false;
+          if (dateMax && pubDate > dateMax) return false;
+        }
         return (
           article.title && article.link && article.time && article.providerName
         );
       })
       .slice(startIndex, startIndex + pageSize);
+
+    // Remove pubDate from response (only used for filtering)
+    articles = articles.map(({ pubDate, ...rest }) => rest);
 
     console.log(`[Search RSS] Found ${articles.length} articles for "${query}"`);
     return articles;

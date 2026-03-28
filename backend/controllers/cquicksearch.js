@@ -95,4 +95,45 @@ const deleteQuickSearch = async (req, res) => {
   }
 }
 
-export { addQuickSearch, deleteQuickSearch, getQuickSearch };
+const updateQuickSearch = async (req, res) => {
+  try {
+    const user_id = req.user.id;
+
+    if (!user_id) {
+      return res.status(210).json({ success: false, message: "User id is required" });
+    }
+
+    const { oldText, newText } = req.body;
+
+    if (!oldText || !newText) {
+      return res.status(210).json({ success: false, message: "Both old and new topic text are required" });
+    }
+
+    const snapshot = await quickSearchesCol.where('user_id', '==', user_id).limit(1).get();
+
+    if (snapshot.empty) {
+      return res.status(210).json({ success: false, message: "No quick search found for the user" });
+    }
+
+    const docRef = snapshot.docs[0].ref;
+    const data = snapshot.docs[0].data();
+    const topics = data.quickSearchText || [];
+    const index = topics.indexOf(oldText);
+
+    if (index === -1) {
+      return res.status(210).json({ success: false, message: "Topic not found" });
+    }
+
+    topics[index] = newText;
+    await docRef.update({
+      quickSearchText: topics,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+
+    res.status(202).json({ success: true, message: "Topic updated successfully" });
+  } catch (error) {
+    res.status(210).json({ success: false, message: error.message });
+  }
+}
+
+export { addQuickSearch, deleteQuickSearch, getQuickSearch, updateQuickSearch };

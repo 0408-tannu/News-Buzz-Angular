@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, inject, ChangeDetectorRef, HostListener, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
@@ -25,6 +25,7 @@ export class NewsProviderCardComponent implements OnInit {
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
   private cdr = inject(ChangeDetectorRef);
+  private elRef = inject(ElementRef);
 
   isFollowing = false;
   isMuted = false;
@@ -61,6 +62,14 @@ export class NewsProviderCardComponent implements OnInit {
     });
   }
 
+  // Close menu when clicking anywhere outside this card
+  @HostListener('document:click', ['$event'])
+  onDocClick(event: MouseEvent): void {
+    if (this.menuOpen && !this.elRef.nativeElement.contains(event.target)) {
+      this.menuOpen = false;
+    }
+  }
+
   toggleFollow(): void {
     const wasFollowing = this.isFollowing;
     const endpoint = wasFollowing ? '/api/userdo/unfollow' : '/api/userdo/follow';
@@ -86,27 +95,19 @@ export class NewsProviderCardComponent implements OnInit {
     });
   }
 
-  toggleMenu(event: Event): void {
-    event.stopPropagation();
-    this.menuOpen = !this.menuOpen;
-  }
-
-  closeMenu(): void {
-    this.menuOpen = false;
-  }
-
   seeArticles(): void {
+    this.menuOpen = false;
     const stripped = this.baseURL.replace(/^https?:\/\//, '');
-    window.open(`${window.location.origin}/search?site=${stripped}`, '_blank');
-    this.closeMenu();
+    this.router.navigate(['/search'], { queryParams: { site: stripped, q: this.name } });
   }
 
   visitWebsite(): void {
-    window.open(this.baseURL, '_blank');
-    this.closeMenu();
+    this.menuOpen = false;
+    window.open(this.baseURL, '_blank', 'noopener');
   }
 
   toggleMute(): void {
+    this.menuOpen = false;
     const wasMuted = this.isMuted;
     const endpoint = wasMuted ? '/api/mute/remove' : '/api/mute/add';
     this.api.post<any>(endpoint, { baseURL: this.baseURL }).subscribe({
@@ -125,10 +126,5 @@ export class NewsProviderCardComponent implements OnInit {
         this.toast('An error occurred. Please try again.');
       },
     });
-    this.closeMenu();
-  }
-
-  onOverlayClick(): void {
-    this.closeMenu();
   }
 }

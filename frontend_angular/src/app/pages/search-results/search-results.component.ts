@@ -62,7 +62,7 @@ export class SearchResultsComponent implements OnInit {
 
   fetchResults(page: number): void {
     const { q, site, tbs, gl, location } = this.currentParams;
-    if (!q && !gl && !site) {
+    if (!q && !gl && !site && !tbs) {
       this.isLoading = false;
       return;
     }
